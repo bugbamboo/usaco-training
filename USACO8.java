@@ -17,21 +17,6 @@ public class namenum {
         PrintWriter out = new PrintWriter(new FileWriter("namenum.out"));
         String [] dict = new String[4617];
         String num =br.readLine();
-	 if (num.equals( "5747867437" )){
-            out.println("KRISTOPHER");
-            out.close();
-            System.exit(0);
-        }
-	if (num.equals( "26678268463" )){
-            out.println("CONSTANTINE");
-            out.close();
-            System.exit(0);
-        }
-	if (num.equals( "463373633623" )){
-            out.println("INDEPENDENCE");
-            out.close();
-            System.exit(0);
-        }
         int d = num.length();
         int x = (int)Math.pow(3 , d);
 
