@@ -212,13 +212,13 @@ public class namenum {
 
 
     }
-    public static boolean isValidName(String test, String[] dictionary){
-        for(String i:dictionary){
-            if(i.equals(test)){
-                return true;
-            }
-        }
-        return false;
+   public static boolean isValidName(String test, String[] dictionary){
+       int y = Arrays.binarySearch(dictionary,test);
+       if(y==-1){ 
+           return false;}
+        else{
+            return true;
+       }
     }
 
 }
