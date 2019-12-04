@@ -18,7 +18,7 @@ public class namenum {
         String [] dict = new String[4617];
         String num =br.readLine();
         int d = num.length();
-        int x = (int)Math.pow(3 , d);
+        int p = (int)Math.pow(3 , d);
 
         for(int n=0; n<4617; n++){
             dict[n]=f.readLine();
@@ -30,7 +30,7 @@ public class namenum {
         int s = 3;
         for(int u=0; u<d;u++){
             char q =num.charAt(u);
-            int p = x;
+            
 
 
 
