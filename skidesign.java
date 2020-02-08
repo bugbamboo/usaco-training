@@ -27,7 +27,7 @@ public class skidesign {
                 }
                 cost+=d*d;
             }
-            total=cost;
+            total=Math.min(cost,total);
         }
         out.println(total);
         out.close();
