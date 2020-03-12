@@ -1,0 +1,51 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class breedflip {
+    public static void main(String[] args) throws IOException{
+
+        BufferedReader f = new BufferedReader(new FileReader("breedflip.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("breedflip.out")));
+        int x = Integer.parseInt(f.readLine());
+        String a= f.readLine();
+        String b = f.readLine();
+        Integer[] arr = compare(a,b);
+        ArrayList<Integer> al = new ArrayList<Integer>();
+        Collections.addAll(al,arr);
+        ArrayList<Integer> a2 = noDup(al);
+        int y=0;
+        for(Integer i:a2){
+            y+=i;
+        }
+        out.println(y);
+        out.close();
+
+    }
+    static Integer[] compare(String a, String b){
+        char h;
+        char g;
+        Integer[] arr = new Integer[a.length()];
+        for(int i=0;i<a.length(); i++){
+            h=a.charAt(i);
+            g=b.charAt(i);
+            if(h!=g){
+               arr[i] =1;
+            }else{
+                arr[i]=0;
+            }
+        }
+        return arr;
+    }public static ArrayList<Integer> noDup(ArrayList<Integer> in) {
+        ArrayList<Integer> newList = new ArrayList<Integer>();
+        newList.add(in.get(0));
+        for(int i = 1; i < in.size(); i++) {
+            if(in.get(i-1) != in.get(i)) {
+                newList.add(in.get(i));
+            }
+        }
+
+        return newList;
+    }
+
+}
