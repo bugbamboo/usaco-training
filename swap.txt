@@ -1,0 +1,77 @@
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class swap {
+    static int[] cows;
+    public static void main(String[] args) throws IOException{
+        BufferedReader f = new BufferedReader(new FileReader("swap.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("swap.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int cowNum = Integer.parseInt(st.nextToken());
+        cows = new int[cowNum];
+        int cycleNum = Integer.parseInt(st.nextToken());
+        int[]a = new int[2];
+        int[]b = new int[2];
+        StringTokenizer st1 = new StringTokenizer(f.readLine());
+        a[0]= Integer.parseInt(st1.nextToken());
+        a[1]= Integer.parseInt(st1.nextToken());
+        StringTokenizer st2 = new StringTokenizer(f.readLine());
+        b[0]= Integer.parseInt(st2.nextToken());
+        b[1]= Integer.parseInt(st2.nextToken());
+
+        for(Integer i=1; i<=cowNum; i++){
+            cows[i-1]=i;
+        }
+        if((a[1]<b[0])){
+            if (cycleNum%2==1){
+                reverse(a);
+                reverse(b);
+            }
+        }else if((b[0]<=a[0]&&b[1]>=a[1])){
+            if (cycleNum%2==1){
+                reverse(a);
+                reverse(b);
+            }
+        }
+        else if((a[0]<=b[0]&&a[1]>=b[1])){
+            if (cycleNum%2==0){
+            }
+            else{
+                for(int y=0;y<cycleNum;y++){
+                    reverse(a);
+                    reverse(b);
+                }
+            }
+        }
+        else{
+            for(int y=0;y<cycleNum;y++){
+                reverse(a);
+                reverse(b);
+            }
+        }
+
+
+
+
+
+        for(int h=0; h<cowNum; h++){
+            out.println(cows[h]);
+        }
+        out.close();
+
+    }
+    static void reverse( int[] indexes){
+        int g=indexes[0];
+        int h=indexes[1];
+        int temp1;
+        for(int i=0;i<(h-g+1)/2;i++ ){
+            temp1 =cows[g+i-1];
+            cows[g+i-1]=cows[h-i-1];
+            cows[h-i-1]= temp1;
+        }
+
+
+    }
+
+
+}
