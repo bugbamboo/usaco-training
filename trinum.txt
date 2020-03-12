@@ -1,0 +1,84 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: numtri
+*/
+
+
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class numtri {
+
+    public static void main(String[] args) throws IOException{
+        BufferedReader f = new BufferedReader(new FileReader("numtri.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("numtri.out")));
+        HashSet<Integer> sum= new HashSet<Integer>(0);
+
+        int rows = Integer.parseInt(f.readLine());
+        int[][] tri= new int[rows][rows];
+        for (int i=0; i<rows;i++){
+            int x =0;
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            while(st.hasMoreTokens()){
+                tri[i][x]=Integer.parseInt(st.nextToken());
+                x++;
+            }
+
+
+        }
+
+        StringBuilder[] arr =generator(rows);
+        //System.out.println(Arrays.toString(arr));
+        for(StringBuilder j:arr){
+            int xPos=0;
+            int yPos=0;
+            int tempSum=0;
+            for(int i=0;i<rows;i++){
+                tempSum+= tri[xPos][yPos];
+                xPos+=1;
+                yPos+=Integer.parseInt(Character.toString(j.charAt(i)));
+            }
+            sum.add(tempSum);
+
+        }
+        Integer[] ans = sum.toArray(new Integer[sum.size()]);
+        Arrays.sort(ans);
+        //System.out.println(Arrays.toString(ans));
+        out.println(ans[ans.length-1]);
+        out.close();
+
+    }
+
+    static StringBuilder[] generator(int length){
+        int n=(int)Math.pow(2,length+0.0);
+        StringBuilder[] arr = new StringBuilder[n];
+        for(int z=0;z<arr.length;z++){
+            arr[z]=new StringBuilder();
+        }
+
+
+        int x=2;
+        for (int g=0; g<length;g++){
+            int w=0;
+            for(int y=0;y<(x/2);y++){
+                for (int e=0; e<(n/x);e++){
+                    arr[w].append(0);
+                    w++;
+                }
+                for (int e=0; e<(n/x);e++){
+                    arr[w].append(1);
+                    w++;
+                }
+
+            }
+            x*=2;
+        }
+        return arr;
+
+    }
+
+}

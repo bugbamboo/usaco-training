@@ -1,0 +1,52 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: sprime
+*/
+import java.io.*;
+import java.math.BigInteger;
+import java.util.HashSet;
+
+public class sprime {
+    static HashSet<BigInteger> hset = new HashSet();
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader("sprime.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sprime.out")),true);
+        int x= Integer.parseInt(in.readLine());
+        primegen((int)Math.pow(10,x));
+        for(int i=((int)Math.pow(10,x-1));i<(int)Math.pow(10,x);i++){
+            int y=0;
+            for(int j=1; j<=x; j++){
+                if(hset.contains(getInt(i,j))){
+                    y++;
+                }else break;
+            }
+            if(y==x){
+                out.println(i);
+            }
+        }
+        out.close();
+
+    }
+    static void  primegen(int max) {
+        BigInteger j = BigInteger.valueOf(max);
+        BigInteger bigInt = BigInteger.valueOf(0);
+        int res;
+        res = j.compareTo(bigInt);
+        while (res==1){
+            bigInt=bigInt.nextProbablePrime();
+            hset.add(bigInt);
+            res = j.compareTo(bigInt);
+
+        }
+
+
+    }
+    static BigInteger getInt(int iNT, int numChar){
+        String n= iNT +"";
+        String upToN = n.substring(0, Math.min(n.length(), numChar));
+        return BigInteger.valueOf(Integer.parseInt(upToN));
+
+    }
+
+}
