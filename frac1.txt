@@ -1,0 +1,40 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: frac1
+*/
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class frac1 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader("frac1.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("frac1.out")),true);
+        HashMap<Double, String> decToFrac = new HashMap<Double, String>();
+        HashSet<Double> decimals = new HashSet<Double>();
+        double i = Integer.parseInt(in.readLine())+0.0;
+        Double dec=0.0;
+        for(double num = 0.0; num<= i;num++){
+            for(double denom = 1.0; denom<= i;denom++){
+                dec = num/denom;
+                if(!decimals.contains(dec) && (dec <=1.0)){
+                    decimals.add(dec);
+                    String n = (int)num +"";
+                    String d = (int)denom +"";
+                    decToFrac.put(dec,(n+"/"+d));
+                }
+
+            }
+        }
+        Object[] arr = decimals.toArray();
+        Arrays.sort(arr);
+        for(Object f :arr){
+            out.println(decToFrac.get(f));
+        }
+        out.close();
+
+
+    }
+}
