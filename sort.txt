@@ -1,0 +1,32 @@
+import java.io.*;
+import java.util.Arrays;
+
+class sort {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("sort.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sort.out")));
+        int i = Integer.parseInt(f.readLine());
+        int[] ints = new int[i];
+        int t=0;
+        for(int d=0; d<i; d++){
+            ints[d]= Integer.parseInt(f.readLine());
+        }
+        int[] ints1= new int[i];
+        System.arraycopy(ints, 0, ints1, 0, i);
+
+        Arrays.sort(ints1);
+
+        for(int s=0; s<i; s++){
+       
+            ints[s]= (s- Arrays.binarySearch(ints1, ints[s]));
+
+        }
+
+        Arrays.sort(ints);
+      
+
+        out.println(ints[i-1]+1);
+        out.close();
+    }
+
+}
