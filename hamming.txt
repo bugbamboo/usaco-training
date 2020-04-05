@@ -1,0 +1,40 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: hamming
+*/
+import java.util.*;
+import java.io.*;
+class hamming {
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader("hamming.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("hamming.out")),true);
+        StringTokenizer st = new StringTokenizer(in.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int B = Integer.parseInt(st.nextToken());
+        int D = Integer.parseInt(st.nextToken());
+        HashSet<Long> nums = new HashSet<Long>();
+        long num = 0;
+        while (nums.size() < N) {
+            if (hammingDistance(nums, num, D) || num == 0) {
+                nums.add(num);
+                if (nums.size() % 10 == 0 || nums.size()==N) {
+                    out.println(num);
+                } else {
+                    out.print(num + " ");
+                }
+            }
+            num++;
+        }
+        out.close();
+    }
+
+    static boolean hammingDist(HashSet<Long> nums, long num, int D) {
+        for (long n : nums) {
+            if (Long.bitCount(n ^ num) < D) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
