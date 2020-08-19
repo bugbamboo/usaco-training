@@ -1,0 +1,244 @@
+/*
+ID: achyuta2
+LANG: JAVA
+PROG: castle
+*/
+
+import java.io.*;
+import java.util.*;
+
+public class castle {
+    static int[][] blob;
+    static HashSet<Integer> roomsize = new HashSet<Integer>();
+    static int[][] blobcopy;
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("castle.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("castle.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int m = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(st.nextToken());
+        int[][] parse = new int[n][m];
+        for(int i=0; i<n; i++){
+            st = new StringTokenizer(f.readLine());
+            for(int j=0; j<m;j++){
+                parse[i][j]=Integer.parseInt(st.nextToken());
+            }
+        }
+        //colors:
+        // 0: open
+        // 1: wall
+        // 2: pathway
+       blob = new int[n*3][m*3];
+        for(int i=0; i<n*3; i++){
+            for(int j=0; j<m*3; j++){
+                blob[i][j]=2;
+            }
+        }
+        int countx =1;
+        int county =1;
+        for(int i=0; i<n; i++){
+            countx = (i*3)+1;
+            for(int j=0; j<m; j++){
+                county = (j*3)+1;
+                blob[(i*3)+1][(j*3)+1]=0;
+                boolean[] fact = decode(parse[i][j]);
+                blob[countx-1][county-1]=1;
+                blob[countx-1][county+1]=1;
+                blob[countx+1][county-1]=1;
+                blob[countx+1][county+1]=1;
+                if(fact[0]){
+
+                    blob[countx-1][county]=1;
+                }
+                if(fact[1]){
+
+                    blob[countx+1][county]=1;
+                }
+                if(fact[2]){
+
+                    blob[countx][county+1]=1;
+                }
+                if(fact[3]){
+
+                    blob[countx][county-1]=1;
+                }
+
+            }
+
+        }
+
+       blobcopy = new int[blob.length][blob[0].length];
+        for(int i=0; i< blob.length; i++){
+            for(int j=0; j<blob[0].length;j++){
+                blobcopy[i][j]=blob[i][j];
+            }
+        }
+
+
+       int roomcount =0;
+       for(int i=0; i< blobcopy.length;i++){
+           for(int j=0; j<blobcopy[0].length;j++){
+               if(blobcopy[i][j]==0){
+                   roomcount++;
+                   roomsize.add(search(i,j,0));
+               }
+           }
+       }
+        HashMap<Integer, Integer[]> removed = new HashMap<>();
+//1 is north, 0 is east;
+        int maxroom =Collections.max(roomsize);
+        for(int j=blob[0].length-2; j>-1; j-=3){
+        for(int i=1; i<blob.length; i+=3){
+
+                if(i==1&&j==blob[0].length-2){
+                    continue;
+                }else if(i==1){
+                    if(blob[i][j+1]==1&&blob[i][j+2]==1){
+                        blob[i][j+1]=2;
+                        blob[i][j+2]=2;
+                        copy();
+                        removed.put(search(i,j,0),new Integer[]{i/3,j/3,0});
+                        blob[i][j+1]=1;
+                        blob[i][j+2]=1;
+                    }
+                }else if(j==blob[0].length-2){
+                    if(blob[i-1][j]==1&&blob[i-2][j]==1){
+                        blob[i-1][j]=2;
+                        blob[i-2][j]=2;
+                        copy();
+                        removed.put(search(i,j,0),new Integer[]{i/3,j/3,1});
+                        blob[i-1][j]=1;
+                        blob[i-2][j]=1;
+                    }
+                }else{
+                    if(blob[i][j+1]==1&&blob[i][j+2]==1){
+                        blob[i][j+1]=2;
+                        blob[i][j+2]=2;
+                        copy();
+                        removed.put(search(i,j,0),new Integer[]{i/3,j/3,0});
+                        blob[i][j+1]=1;
+                        blob[i][j+2]=1;
+                    }
+                    if(blob[i-1][j]==1&&blob[i-2][j]==1){
+                        blob[i-1][j]=2;
+                        blob[i-2][j]=2;
+                        copy();
+                        removed.put(search(i,j,0),new Integer[]{i/3,j/3,1});
+                        blob[i-1][j]=1;
+                        blob[i-2][j]=1;
+                    }
+                    
+                }
+            }
+        }
+int maxrem = Collections.max(removed.keySet());
+        out.println(roomcount);
+        out.println(maxroom);
+        out.println(maxrem);
+        Integer[] x = removed.get(maxrem);
+        out.print(x[0]+1+" ");
+        out.print(x[1]+1+" ");
+        if(x[2]==1){
+            out.println("N");
+        }else{
+            out.println("E");
+        }
+        out.close();
+    }
+
+    static void copy(){
+        for(int i=0; i< blob.length; i++){
+            for(int j=0; j<blob[0].length;j++){
+                blobcopy[i][j]=blob[i][j];
+            }
+        }
+    }
+    static int search(int i, int j, int count){
+        int current = 0;
+        if(blobcopy[i][j]==0){
+            blobcopy[i][j]=3;
+            current=1;
+
+        }
+
+        if(blobcopy[i][j]==1){
+            return 0;
+        }
+
+    blobcopy[i][j]=3;
+        if(isValidi(i+1)&&isValidj(j)&&blobcopy[i+1][j]!=1&&blobcopy[i+1][j]!=3){
+            current+=search(i+1,j,current);
+
+
+        }
+        if(isValidi(i-1)&&isValidj(j)&&blobcopy[i-1][j]!=1&&blobcopy[i-1][j]!=3){
+            current+=search(i-1,j,current);
+
+        }
+        if(isValidi(i)&&isValidj(j+1)&&blobcopy[i][j+1]!=1&&blobcopy[i][j+1]!=3){
+            current+=search(i,j+1,current);
+
+        }
+        if(isValidi(i)&&isValidj(j-1)&&blobcopy[i][j-1]!=1&&blobcopy[i][j-1]!=3){
+            current+=search(i,j-1,current);
+
+        }
+        return current;
+
+    }
+    static boolean isValidi(int i){
+        if(i<blob.length&&i>-1){
+            return true;
+        }
+        return false;
+    }
+    static boolean isValidj(int j){
+        if(j<blob[0].length&&j>-1){
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public static boolean[] decode(int code){
+        //0:north
+        //1:south
+        //2:east
+        //3:west
+        switch(code){
+            case 1:
+                return new boolean[]{false, false, false, true};
+            case 2:
+                return new boolean[]{true, false, false, false};
+            case 4:
+                return new boolean[]{false, false, true, false};
+            case 8:
+                return new boolean[]{false, true, false, false};
+            case 3:
+                return new boolean[]{true, false, false, true};
+            case 5:
+                return new boolean[]{false, false, true, true};
+            case 9:
+                return new boolean[]{false, true, false, true};
+            case 6:
+                return new boolean[]{true, false, true, false};
+            case 10:
+                return new boolean[]{true, true, false, false};
+            case 12:
+                return new boolean[]{false, true, true, false};
+            case 11:
+                return new boolean[]{true, true, false, true};
+            case 7:
+                return new boolean[]{true, false, true, true};
+            case 13:
+                return new boolean[]{false, true, true, true};
+            case 14:
+                return new boolean[]{true, true, true, false};
+            case 0:
+                return new boolean[]{false, false, false, false};
+            default:
+                return new boolean[]{true, true, true, true};
+        }
+    }
+}
