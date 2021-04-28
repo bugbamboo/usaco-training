@@ -1,0 +1,79 @@
+import java.io.*;
+import java.util.*;
+
+
+public class wormsort {
+    static void addEdge(ArrayList<ArrayList<Integer>> am, int s, int d,HashSet<Integer> seen) {
+        am.get(s).add(d);
+        am.get(d).add(s);
+        if(seen.contains(s)&&!seen.contains(d)){
+            dfs(am,d,seen);
+        }
+        if(!seen.contains(s)&&seen.contains(d)){
+            dfs(am,s,seen);
+        }
+    }
+    static void dfs(ArrayList<ArrayList<Integer>> am, int start,HashSet<Integer> seen){
+        if(!seen.contains(start)){
+            seen.add(start);
+            for(Integer i: am.get(start)){
+                dfs(am, i, seen);
+            }
+        }
+    }
+    public static void main(String[] args) throws IOException{
+        BufferedReader f = new BufferedReader(new FileReader("wormsort.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("wormsort.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int cowNum=Integer.parseInt(st.nextToken());
+        int wormNum= Integer.parseInt(st.nextToken());
+        int[] cows = new int[cowNum];
+        int[] solved = new int[cowNum];
+        st = new StringTokenizer(f.readLine());
+        for(int i=0; i<cowNum; i++){
+            cows[i]=Integer.parseInt(st.nextToken());
+            solved[i]=i+1;
+
+        }
+        int[][] edges = new int[wormNum][3];
+        for(int i=0; i<wormNum; i++){
+            st= new StringTokenizer(f.readLine());
+            edges[i][0] = Integer.parseInt(st.nextToken());
+            edges[i][1] = Integer.parseInt(st.nextToken());
+            edges[i][2] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(edges, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+               return -1*Integer.compare(ints[2],t1[2]);
+            }
+        });
+        HashSet<Integer> seen = new HashSet<Integer>();
+        for(int i=0; i< cowNum; i++){
+            if(cows[i]==solved[i]){
+                seen.add(cows[i]-1);
+            }
+        }
+        if(seen.size()==cowNum){
+            out.println(-1);
+            out.close();
+            return;
+        }
+        for(int i=0; i<cowNum; i++){
+            cows[i]=cows[i]-1;
+        }
+        ArrayList<ArrayList<Integer>> am = new ArrayList<ArrayList<Integer>>(cowNum);
+        for (int i = 0; i < cowNum; i++)
+            am.add(new ArrayList<Integer>());
+        int index =0;
+        while(seen.size()<cowNum){
+            addEdge(am, edges[index][0]-1,edges[index][1]-1,seen);
+            index++;
+        }
+        out.println(edges[index-1][2]);
+        out.close();
+
+
+
+    }
+}
