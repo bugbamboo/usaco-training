@@ -1,0 +1,106 @@
+import java.io.*;
+import java.util.*;
+
+public class revegetate {
+    static boolean addEdge(ArrayList<ArrayList<Integer>> am, int s, int d, HashMap<Integer,Boolean> colors, boolean isDifferent) {
+        am.get(s).add(d);
+        am.get(d).add(s);
+        /*
+        if(colors.containsKey(s)&&colors.containsKey(d)){
+            if(isDifferent&&(colors.get(s)==colors.get(d))){
+                return false;
+            }
+            if(!isDifferent&&(colors.get(s)!=colors.get(d))){
+                return false;
+            }
+        }
+        if(colors.containsKey(s)&&!colors.containsKey(d)){
+            if(isDifferent){
+                colors.put(d,!colors.get(s));
+            }else{
+                colors.put(d,colors.get(s));
+            }
+        }
+        if(!colors.containsKey(s)&&colors.containsKey(d)){
+            if(isDifferent){
+                colors.put(s,!colors.get(d));
+            }else{
+                colors.put(s,colors.get(d));
+            }
+        }
+        if(!colors.containsKey(s)&&!colors.containsKey(d)){
+            colors.put(s,false);
+            if(isDifferent){
+                colors.put(d,!colors.get(s));
+            }else{
+                colors.put(d,colors.get(s));
+            }
+        }
+*/
+        return true;
+    }
+    static void dfs(ArrayList<ArrayList<Integer>> am, int start,HashSet<Integer> seen){
+        if(!seen.contains(start)){
+            seen.add(start);
+            for(Integer i: am.get(start)){
+                dfs(am, i, seen);
+            }
+        }
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("revegetate.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("revegetate.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int fields = Integer.parseInt(st.nextToken());
+        int edgeNum = Integer.parseInt(st.nextToken());
+        int[][] edges = new int[edgeNum][3];
+        for(int i=0; i<edgeNum; i++){
+            st = new StringTokenizer(f.readLine());
+            String waow = st.nextToken();
+            if(waow.equals("S")){
+                edges[i][0]=1;
+            }else{
+                edges[i][0]=-1;
+            }
+            edges[i][1]=Integer.parseInt(st.nextToken())-1;
+            edges[i][2]=Integer.parseInt(st.nextToken())-1;
+        }
+
+        ArrayList<ArrayList<Integer>> am = new ArrayList<ArrayList<Integer>>(fields);
+        for (int i = 0; i <fields ; i++)
+            am.add(new ArrayList<Integer>());
+        HashMap<Integer,Boolean > colors = new HashMap<>();
+        for(int i=0; i<edges.length;i++ ){
+            boolean e = false;
+
+            if(edges[i][0]==1){
+                e=addEdge(am, edges[i][1],edges[i][2],colors,false);
+            }else{
+                e=addEdge(am, edges[i][1],edges[i][2],colors,true);
+            }
+            if(!e){
+                out.println(0);
+                out.close();
+                return;
+            }
+        }
+        HashSet<Integer> seen = new HashSet<>();
+        int count =0;
+        for(int i=0; i<fields; i++){
+            if(!seen.contains(i)){
+                count++;
+                dfs(am,i,seen);
+            }
+        }
+        System.out.println(count);
+        out.print(1);
+
+        for(int i=0; i<count; i++){
+            out.print(0);
+        }
+        out.println();
+        out.close();
+
+    }
+}
+

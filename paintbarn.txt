@@ -1,0 +1,50 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class paintbarn {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("paintbarn.in"));
+        final int square =1001;
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("paintbarn.out")));
+        int[][] barn = new int[square][square];
+        int[][] painted = new int[square][square];
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int paintNum = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+        int[][] paints = new int[paintNum][4];
+        for(int i=0; i<paintNum; i++){
+            st = new StringTokenizer(f.readLine());
+            paints[i][0]=Integer.parseInt(st.nextToken());
+            paints[i][1]=Integer.parseInt(st.nextToken());
+            paints[i][2]= Integer.parseInt(st.nextToken());
+            paints[i][3]= Integer.parseInt(st.nextToken());
+        }
+        for(int i=0; i<paintNum; i++){
+            for(int j=paints[i][1]; j<paints[i][3]; j++){
+                barn[j][paints[i][0]]=barn[j][paints[i][0]] +1;
+                barn[j][paints[i][2]]=barn[j][paints[i][2]]-1;
+            }
+        }
+
+        for(int i=0; i<square; i++){
+            int owo = 0;
+            for(int j=0; j<square; j++){
+                owo +=barn[i][j];
+                painted[i][j]=owo;
+            }
+        }
+        int count =0;
+        for(int i=0; i<square; i++){
+            for(int j=0; j<square; j++){
+                if(painted[i][j]==K){
+                    count++;
+                }
+            }
+        }
+       
+        out.println(count);
+        out.close();
+
+    }
+}

@@ -1,0 +1,100 @@
+import java.io.*;
+import java.util.ArrayList;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+public class perimeter2 {
+    public static int search(int[][] grid, int startx, int starty,boolean[][] seen ){
+        if(startx>-1&&startx<grid.length&&starty>-1&&starty<grid[0].length&&!seen[startx][starty]){
+            seen[startx][starty]=true;
+            int sum =grid[startx][starty];
+            sum+=search(grid,startx+1,starty,seen);
+            sum+=search(grid,startx-1,starty,seen);
+            sum+=search(grid,startx,starty+1,seen);
+            sum+=search(grid,startx,starty-1,seen);
+            return sum;
+        }
+        return 0;
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("perimeter.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("perimeter.out")));
+        int dimm = Integer.parseInt(f.readLine());
+        int[][] exes = new int[dimm][dimm];
+        int[][] perims = new int[dimm][dimm];
+        boolean[][] seens = new boolean[dimm][dimm];
+        for(int i=0; i<dimm; i++){
+            char[] meow = f.readLine().toCharArray();
+            for(int j=0; j<dimm; j++){
+                if(meow[j]=='#'){
+                    exes[i][j]=1;
+                }else{
+                    exes[i][j]=0;
+                    seens[i][j]=true;
+                }
+            }
+        }
+        for(int i=0; i<dimm; i++){
+            for(int j=0; j<dimm; j++){
+                if(!seens[i][j]){
+                    int count =0;
+                    int x=i;
+                    int y=j+1;
+                    if((x>-1&&x<dimm&&y>-1&&y<dimm&&exes[x][y]==0)||!(x>-1&&x<dimm&&y>-1&&y<dimm)){
+                        count++;
+                    }
+                    x=i;
+                    y=j-1;
+                    if(x>-1&&x<dimm&&y>-1&&y<dimm&&exes[x][y]==0||!(x>-1&&x<dimm&&y>-1&&y<dimm)){
+                        count++;
+                    }
+                    x=i-1;
+                    y=j;
+                    if(x>-1&&x<dimm&&y>-1&&y<dimm&&exes[x][y]==0||!(x>-1&&x<dimm&&y>-1&&y<dimm)){
+                        count++;
+                    }
+                    x=i+1;
+                    y=j;
+                    if(x>-1&&x<dimm&&y>-1&&y<dimm&&exes[x][y]==0||!(x>-1&&x<dimm&&y>-1&&y<dimm)){
+                        count++;
+                    }
+                    perims[i][j]=count;
+                }
+
+            }
+        }
+        ArrayList<int[]> answers = new ArrayList<>();
+        boolean[][] seens2 = new boolean[dimm][dimm];
+        for(int i=0; i<dimm; i++){
+            for(int j=0; j<dimm; j++){
+                seens2[i][j]=seens[i][j];
+            }
+        }
+        for(int i=0; i<dimm; i++){
+            for (int j=0; j<dimm; j++){
+                if(!seens[i][j]){
+                    int area = search(exes,i,j,seens);
+                    int perimeter = search(perims,i,j,seens2);
+                    answers.add(new int[]{area,perimeter});
+                }
+            }
+        }
+        Collections.sort(answers, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+               if(Integer.compare(ints[0],t1[0])!=0){
+                   return Integer.compare(ints[0],t1[0]);
+               }else{
+                   return -1*Integer.compare(ints[1],t1[1]);
+               }
+            }
+        });
+
+        out.print(answers.get(answers.size()-1)[0]);
+        out.print(" ");
+        out.print(answers.get(answers.size()-1)[1]);
+        out.println();
+        out.close();
+    }
+}

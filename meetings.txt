@@ -1,0 +1,105 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+
+public class meetings {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("meetings.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("meetings.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int len = Integer.parseInt(st.nextToken());
+        long[][] moving =new long[n][4];//index 0: weight, index 1: position, index 2: direction, index 3: time till reaches end
+        for(int i=0; i<n;i++){
+            st = new StringTokenizer(f.readLine());
+            moving[i][0]= Integer.parseInt(st.nextToken()) ;
+            moving[i][1]=Integer.parseInt(st.nextToken());
+            moving[i][2]=Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(moving, new Comparator<long[]>() {
+            @Override
+            public int compare(long[] ints, long[] t1) {
+                return Long.compare(ints[1],t1[1]);
+            }
+        });
+        for(int i=0; i<n; i++){
+            if(moving[i][2]==1){
+                moving[i][3]=len-moving[i][1];
+            }else{
+                moving[i][3]=moving[i][1];
+            }
+        }
+        ArrayList<Long> leftTime = new ArrayList<>();
+        ArrayList<Long> rightTime = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            if(moving[i][2]==1){
+                rightTime.add(moving[i][3]);
+            }else{
+                leftTime.add(moving[i][3]);
+            }
+        }
+        for(int i=0; i<leftTime.size(); i++){
+            moving[i][3]=leftTime.get(i);
+        }
+        for(int i=leftTime.size(); i<n; i++){
+            moving[i][3]=rightTime.get(i-leftTime.size());
+        }
+        Arrays.sort(moving, new Comparator<long[]>() {
+            @Override
+            public int compare(long[] ints, long[] t1) {
+                return Long.compare(ints[3],t1[3]);
+            }
+        });
+        long sum =0;
+
+        for(int i=0; i<n; i++){
+            sum+=moving[i][0];
+        }
+        double divided = sum/2.0;
+        long curr =0;
+        int index =0;
+        while(curr<divided){
+            curr+=moving[index][0];
+            index++;
+        }
+        long time = moving[index-1  ][3];
+        long[] rightpos = new long[rightTime.size()];
+        long[] leftpos = new long[leftTime.size()];
+        int rightcount =0;
+        int leftcount =0;
+        for(int i=0; i<n; i++){
+            if(moving[i][2]==1){
+                rightpos[rightcount]=moving[i][1];
+                rightcount++;
+            }else{
+                leftpos[leftcount]=moving[i][1];
+                leftcount++;
+            }
+        }
+        Arrays.sort(leftpos);
+        Arrays.sort(rightpos);
+        int collisions=0;
+        for(long i:rightpos){
+            collisions+=helper(leftpos,i,2*time);
+        }
+        System.out.println(collisions);
+        out.println(collisions);
+        out.close();
+
+
+
+    }
+    static int helper(long[] meow, long start, long increment){
+        int begin = -1*Arrays.binarySearch(meow, start) -1;
+        System.out.println(begin);
+        int end =Arrays.binarySearch(meow, start+increment);
+        if(end>=0){
+            return (end-begin)+1;
+        }else{
+            end = -1*end-1;
+            return end-begin;
+        }
+    }
+}
