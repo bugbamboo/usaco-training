@@ -1,0 +1,63 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+
+public class socdist {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("socdist.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("socdist.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int cows = Integer.parseInt(st.nextToken());
+        int interNum= Integer.parseInt(st.nextToken());
+        long[][] intervals = new long[interNum][2];
+        for(int i=0; i<interNum; i++){
+            st = new StringTokenizer(f.readLine());
+            intervals[i][0]= Long.parseLong(st.nextToken());
+            intervals[i][1]=Long.parseLong(st.nextToken());
+        }
+        Arrays.sort(intervals, new Comparator<long[]>() {
+            @Override
+            public int compare(long[] ints, long[] t1) {
+               return Long.compare(ints[0],t1[0]);
+            }
+        });
+        long pos =0;
+        for(long a=intervals[interNum-1][1];a>=1;a/=2){
+            while(check(intervals,pos+a,cows)){
+                pos+=a;
+
+            }
+        }
+        System.out.println(pos);
+        out.println(pos);
+        out.close();
+
+    }
+    public static boolean check (long[][] inter, long value, long k){
+        int j=0;
+        long index=inter[0][0];
+        int curr =0;
+
+        while(j<k){
+
+            if(index>inter[inter.length-1][1]){
+                return false;
+            }
+            else{
+
+                while (curr<inter.length&& index+value>inter[curr][1]){
+                    curr++;
+                }
+
+                if(index+value>inter[inter.length-1][1]){
+                    return j+1>=k;
+                }
+                index=Math.max(inter[curr][0],index+value);
+                j++;
+            }
+        }
+        return true;
+    }
+}
