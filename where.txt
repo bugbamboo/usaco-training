@@ -1,0 +1,113 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+
+public class where {
+    public static boolean isPCL(int[][] arr){
+        HashSet<Integer>  check1 = new HashSet<>();
+        for(int[] i: arr){
+            for(int j:i){
+                check1.add(j);
+            }
+        }
+        if(check1.size()!=2){
+            return false;
+        }
+        int count1 =0;
+        int count2=0;
+        Iterator<Integer> owo = check1.iterator();
+        int a1 = owo.next();
+        int a2 = owo.next();
+        for(int i=0; i<arr.length; i++){
+                for(int j=0; j<arr[0].length; j++){
+                    if(arr[i][j]==a1){
+                        count1++;
+                        flood(arr,i,j,a1);
+                    }
+                }
+        }
+        for(int i=0; i<arr.length; i++){
+            for(int j=0; j<arr[0].length; j++){
+                if(arr[i][j]==a2){
+                    count2++;
+                    flood(arr,i,j,a2);
+                }
+            }
+        }
+        if(count1==1&&count2==1){
+            return false;
+        }
+        return count1==1||count2==1;
+
+    }
+    public static void flood(int[][] ar, int x, int y, int rightCOlor){
+        if(x>-1&&x<ar.length&&y>-1&&y<ar[0].length&&ar[x][y]==rightCOlor){
+            ar[x][y]=-1;
+            flood(ar,x,y+1,rightCOlor);
+            flood(ar,x,y-1,rightCOlor);
+            flood(ar,x+1,y,rightCOlor);
+            flood(ar,x-1,y,rightCOlor);
+        }
+    }
+    public static int convert(char x){
+       int a = x;
+
+        return a-64;
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("where.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("where.out")));
+        int weow = Integer.parseInt(f.readLine());
+        int[][] total = new int[weow][weow];
+        for(int i=0; i<weow;  i++){
+            String e= f.readLine();
+            char[] wow = e.toCharArray();
+            for(int j=0; j<weow; j++){
+                total[i][j]=convert(wow[j]);
+            }
+        }
+        ArrayList<int[]> candidates = new ArrayList<>();
+        for(int left=0; left<weow; left++){
+            for(int top =0; top<weow; top++){
+                for(int right=left; right<weow; right++){
+                    for(int bottom=top; bottom<weow; bottom++){
+                        int[][] slice = new int[(right-left)+1][(bottom-top)+1];
+                        for(int i=left; i<=right; i++){
+                            for(int j=top; j<=bottom; j++){
+                                slice[i-left][j-top]=total[i][j];
+                            }
+                        }
+                        if(isPCL(slice)){
+                            candidates.add(new int[]{left,right,top,bottom});
+                        }
+                    }
+                }
+            }
+        }
+        int counter =0;
+
+        for(int i=0; i<candidates.size();i++){
+            boolean contains = false;
+            for(int j=0; j<candidates.size(); j++){
+                if(i!=j){
+                    int[] o1 = candidates.get(i);
+                    int[] o2 = candidates.get(j);
+
+                    if(o1[0]>=o2[0]&&o1[2]>=o2[2]&&o1[1]<=o2[1]&&o1[3]<=o2[3]){
+                        contains=true;
+                    }
+                }
+            }
+            if(!contains){
+                counter++;
+            }
+
+        }
+        out.println(counter);
+        out.close();
+
+
+    }
+}

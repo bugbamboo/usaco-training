@@ -1,0 +1,49 @@
+import java.io.*;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+
+public class pairup {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("pairup.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("pairup.out")),true);
+        int num = Integer.parseInt(f.readLine());
+        long[][] cows = new long[num][2];
+        for(int i=0; i<num; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            cows[i][0]=Long.parseLong(st.nextToken());
+            cows[i][1]=Long.parseLong(st.nextToken());
+        }
+        Arrays.sort(cows, new Comparator<long[]>() {
+            @Override
+            public int compare(long[] ints, long[] t1) {
+                return Long.compare(ints[1],t1[1]);
+            }
+        });
+        long price =0;
+        int start =0;
+        int end = num-1;
+        while(!(cows[start][0]==0&&cows[end][0]==0)) {
+
+            if(start==end){
+                price=Math.max(price,cows[start][1]*2);
+                break;
+            }else{
+                long min =Math.min(cows[start][0],cows[end][0]);
+                price=Math.max(price,(cows[start][1]+cows[end][1]));
+                
+                cows[start][0]-=min;
+                cows[end][0]-=min;
+                if(cows[start][0]==0){
+                    start++;
+                }if(cows[end][0]==0){
+                    end--;
+                }
+
+            }
+
+        }
+        out.println(price);
+    }
+}

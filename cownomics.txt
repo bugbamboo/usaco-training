@@ -1,0 +1,65 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class cownomics {
+    public static int convert(char x){
+        return x;
+    }
+    public static boolean check(int[][] spot, int[][] nospot, int x, int y, int z){
+        HashSet<String> spotset = new HashSet<>();
+        HashSet<String> notset = new HashSet<>();
+        for(int i=0; i<spot.length; i++){
+            spotset.add(Arrays.toString(new int[]{spot[i][x],spot[i][y],spot[i][z]}));
+        }
+        for(int i=0; i<nospot.length; i++){
+            notset.add(Arrays.toString(new int[]{nospot[i][x],nospot[i][y],nospot[i][z]}));
+        }
+        for(String e :spotset){
+            if(notset.contains(e)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("cownomics.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("cownomics.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int genomelen = Integer.parseInt(st.nextToken());
+        int[][] spotted = new int[N][genomelen];
+        int[][] notted = new int[N][genomelen];
+        for(int i=0; i<N; i++){
+            String e = f.readLine();
+            char[] uwu = e.toCharArray();
+            for(int j=0; j<genomelen; j++){
+                spotted[i][j]=convert(uwu[j]);
+            }
+        }
+        for(int i=0; i<N; i++){
+            String e = f.readLine();
+            char[] uwu = e.toCharArray();
+            for(int j=0; j<genomelen; j++){
+                notted[i][j]=convert(uwu[j]);
+            }
+        }
+        int count =0;
+        for(int x=0; x<genomelen; x++){
+            for(int y=x+1; y<genomelen; y++) {
+                for (int z = y+1; z < genomelen; z++) {
+                    if (check(spotted, notted, x, y, z)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        out.println(count);
+        out.close();
+
+
+
+    }
+}
