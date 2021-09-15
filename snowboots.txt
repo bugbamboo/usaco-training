@@ -1,0 +1,51 @@
+import java.io.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class snowboots {
+    static HashSet<Integer> set = new HashSet<>();
+    public static void main(String[] args) throws IOException{
+        BufferedReader f = new BufferedReader(new FileReader("snowboots.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("snowboots.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int spotnum = Integer.parseInt(st.nextToken());
+        int bootnum = Integer.parseInt(st.nextToken());
+        int[][] booties = new int[bootnum][2];
+        int[] spotties = new int[spotnum];
+        boolean[][] checked = new boolean[bootnum][spotnum];
+        st = new StringTokenizer(f.readLine());
+        for(int i=0; i<spotnum; i++){
+            spotties[i]=Integer.parseInt(st.nextToken());
+        }
+        for(int i=0; i<bootnum;i++){
+            st = new StringTokenizer(f.readLine());
+            booties[i][0]=Integer.parseInt(st.nextToken());
+            booties[i][1]=Integer.parseInt(st.nextToken());
+        }
+        search(spotties,booties,0,0,checked);
+
+        out.println(Collections.min(set));
+        out.close();
+
+
+    }
+    public static void search(int[] spots, int[][] boots, int spot, int boot, boolean[][] checked){
+
+        if(spot>=spots.length-1){
+            set.add(boot);
+            return;
+        }
+        checked[boot][spot]=true;
+        for(int i=spot+1; i<= Math.min(spot+boots[boot][1],spots.length-1);i++){
+            if(spots[i]<=boots[boot][0]&&!checked[boot][i]){
+                search(spots,boots,i,boot,checked);
+            }
+        }
+        for(int i=boot+1; i<boots.length;i++){
+            if(spots[spot]<=boots[i][0]&&!checked[i][spot]){
+                search(spots,boots,spot,i,checked);
+            }
+        }
+    }
+}

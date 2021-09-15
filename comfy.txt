@@ -1,0 +1,112 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class comfy {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader f = new BufferedReader(new FileReader("comfy.in"));
+        int cowNum = Integer.parseInt(f.readLine());
+        cowPoint[] points = new cowPoint[cowNum];
+        boolean[][] arr = new boolean[2001][2001];
+        for(int i=0; i<cowNum; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            int x = Integer.parseInt(st.nextToken())+500;
+            int y = Integer.parseInt(st.nextToken())+500;
+            points[i]= new cowPoint(x,y);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int wee =0;
+        for(int i=0; i<cowNum-1; i++){
+            int meow = search(points[i],arr,0);
+            wee+=meow;
+            wee--;
+            sb.append(wee+"\n");
+        }
+        int meow =search(points[cowNum-1],arr,0);
+        wee+=meow;
+        wee--;
+        sb.append(wee);
+        System.out.println(sb.toString());
+
+    }
+    public static int search(cowPoint point, boolean[][] arr, int count){
+        if(arr[point.x][point.y]){
+            return count;
+        }
+        arr[point.x][point.y]=true;
+        int y = count+1;
+        if(empty(point,arr).get(1).size()==3){
+            y+=search(empty(point,arr).get(0).get(0),arr,0);
+
+        }
+        for(cowPoint P:empty(point,arr).get(1)){
+            if(empty(P,arr).get(1).size()==3){
+                y+=search(empty(P,arr).get(0).get(0),arr,0);
+            }
+        }
+        return y;
+
+    }
+    public static ArrayList<ArrayList<cowPoint>> empty(cowPoint p, boolean[][] arr){
+        cowPoint a = new cowPoint(p.x+1,p.y);
+        cowPoint b = new cowPoint(p.x-1,p.y);
+        cowPoint c = new cowPoint(p.x,p.y+1);
+        cowPoint d = new cowPoint(p.x,p.y-1);
+        ArrayList<ArrayList<cowPoint>> empty = new ArrayList<>();
+        empty.add(new ArrayList<cowPoint>());
+        empty.add(new ArrayList<cowPoint>());
+        if(!arr[a.x][a.y]){
+            empty.get(0).add(a);
+        }else{
+            empty.get(1).add(a);
+        }
+        if(!arr[b.x][b.y]){
+            empty.get(0).add(b);
+        }else{
+            empty.get(1).add(b);
+        }
+        if(!arr[c.x][c.y]){
+            empty.get(0).add(c);
+        }else{
+            empty.get(1).add(c);
+        }
+        if(!arr[d.x][d.y]){
+            empty.get(0).add(d);
+        }else{
+            empty.get(1).add(d);
+        }
+        return empty;
+    }
+
+}
+class cowPoint{
+    int x;
+    int y;
+    public cowPoint(int x, int y){
+        this.x=x;
+        this.y=y;
+    }
+    @Override
+    public boolean equals(Object obj){
+        if(obj==null || obj.getClass()!=this.getClass()){
+            return false;
+        }
+        cowPoint e = (cowPoint)obj;
+
+        return this.x==e.x&&this.y==e.y;
+    }
+    @Override
+    public int hashCode(){
+        return (this.toString()).hashCode();
+    }
+    @Override
+    public String toString(){
+        return x +" "+y;
+    }
+}

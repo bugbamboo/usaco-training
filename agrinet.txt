@@ -1,0 +1,86 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: agrinet
+*/
+import java.io.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class agrinet {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("agrinet.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("agrinet.out")));
+        int numnode = Integer.parseInt(f.readLine());
+        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
+        for(int i=0; i<numnode; i++){
+            graph.add(new ArrayList<>());
+        }
+        ArrayList<Integer> weights = new ArrayList<>();
+        String s = f.readLine();
+        while(s!=null){
+            StringTokenizer st = new StringTokenizer(s);
+            while (st.hasMoreTokens()){
+                weights.add(Integer.parseInt(st.nextToken()));
+            }
+            s=f.readLine();
+        }
+        for(int i=0; i<weights.size(); i++){
+            int x = i/numnode;
+            int y = i%numnode;
+            graph.get(x).add(new int[]{y,weights.get(i)});
+            graph.get(y).add(new int[]{x,weights.get(i)});
+        }
+
+        int[] distance = new int[numnode];
+        int[] source = new int[numnode];
+        boolean[] intree = new boolean[numnode];
+        ArrayList<ArrayList<int[]>> minspantree = new ArrayList<>();
+        out.println(primTree(distance,source,intree,graph,minspantree,numnode));
+        out.close();
+
+    }
+    public static int primTree(int[] distance, int[] source, boolean[] intree, ArrayList<ArrayList<int[]>> graphedges, ArrayList<ArrayList<int[]>> newedges, int graphsize){
+        for(int i=0; i<graphsize; i++){
+            newedges.add(new ArrayList<>());
+            distance[i]=Integer.MAX_VALUE;
+            source[i]=-1;
+        }
+        int treecost = 0;
+        int currsize =1;
+        intree[0]=true;
+        for(int[] x: graphedges.get(0)){
+            distance[x[0]]=x[1];
+            source[x[0]]=0;
+        }
+        while (currsize<graphsize){
+            int mindist = Integer.MAX_VALUE;
+            int node = -1;
+            for(int i=0; i<graphsize; i++){
+                if(!intree[i]&&mindist>distance[i]){
+                    mindist=distance[i];
+                    node=i;
+                }
+
+            }
+            if(mindist==Integer.MAX_VALUE){
+                return -1;
+            }
+            newedges.get(node).add(new int[]{source[node], mindist});
+            newedges.get(source[node]).add(new int[]{node, mindist});
+            currsize++;
+            treecost+=mindist;
+            intree[node]=true;
+            for(int[] x: graphedges.get(node)){
+                if(distance[x[0]]>x[1]){
+                    distance[x[0]]=x[1];
+                    source[x[0]]=node;
+                }
+            }
+        }
+
+
+        return treecost;
+    }
+}
+

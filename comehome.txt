@@ -1,0 +1,160 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: comehome
+*/
+import java.io.*;
+import java.util.*;
+
+public class comehome {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("comehome.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("comehome.out")));
+        int numedge = Integer.parseInt(f.readLine());
+        HashMap<String,Integer> convert = new HashMap<>();
+        HashSet<Integer> startpoints = new HashSet<>();
+        int counter =0;
+        int[][] edges = new int[numedge][3];
+        convert.put("Z",-1);
+        for(int i=0; i<numedge; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            String s1 = st.nextToken();
+            String s2 = st.nextToken();
+            int s1int = 0;
+            int s2int =0;
+            int len = Integer.parseInt(st.nextToken());
+            if(!convert.containsKey(s1)){
+                convert.put(s1,counter);
+                counter++;
+            }
+            if(!convert.containsKey(s2)){
+                convert.put(s2,counter);
+                counter++;
+            }
+            s1int=convert.get(s1);
+            s2int=convert.get(s2);
+            if(Character.isUpperCase(s1.toCharArray()[0])&&s1int!=-1){
+                startpoints.add(s1int);
+            }
+            if(Character.isUpperCase(s1.toCharArray()[0])&&s1int!=-1){
+                startpoints.add(s1int);
+            }
+            edges[i][0]=s1int;
+            edges[i][1]=s2int;
+            edges[i][2]=len;
+
+        }
+        int toreplace = convert.keySet().size()-1;
+        for(int i=0; i<edges.length; i++){
+            if(edges[i][0]==-1){
+                edges[i][0]=toreplace;
+            }
+            if(edges[i][1]==-1){
+                edges[i][1]=toreplace;
+            }
+        }
+        int numnodes = convert.keySet().size();
+
+
+        ArrayList<ArrayList<int[]>> adjlist = new ArrayList<>();
+        for(int i=0; i<numnodes; i++){
+            adjlist.add(new ArrayList<>());
+        }
+        for(int i=0; i<edges.length; i++){
+            if(edges[i][0]!=edges[i][1]){
+                int[] edge1 = new int[]{edges[i][0],edges[i][2]};
+                int[] edge2 = new int[]{edges[i][1],edges[i][2]};
+                boolean foundrep1 = false;
+                boolean foundrep2 = false;
+                for(int[] x: adjlist.get(edges[i][0])){
+
+                    if(x[0]==edge2[0]){
+                        foundrep1=true;
+                        if(edge2[1]<x[1]){
+                            adjlist.get(edges[i][0]).remove(x);
+                            adjlist.get(edges[i][0]).add(edge2);
+                            break;
+
+                        }
+                    }
+
+                }
+                if(!foundrep1){
+                    adjlist.get(edges[i][0]).add(edge2);
+                }
+                for(int[] x: adjlist.get(edges[i][1])){
+
+
+                    if(x[0]==edge1[0]){
+                        foundrep2=true;
+                        if(edge1[1]<x[1]){
+                            adjlist.get(edges[i][1]).remove(x);
+                            adjlist.get(edges[i][1]).add(edge1);
+                            break;
+
+                        }
+                    }
+
+                }
+                if(!foundrep2){
+                    adjlist.get(edges[i][1]).add(edge1);
+                }
+            }
+
+        }
+        int[] distances = new int[numnodes];
+        boolean[] visited = new boolean[numnodes];
+        int[] parent = new int[numnodes];
+        dijkstrasPath(numnodes-1,numnodes,adjlist,distances,visited,parent);
+        int mindist = Integer.MAX_VALUE;
+        int ans =-1;
+        for(int i:startpoints){
+            if(distances[i]<mindist){
+                mindist=distances[i];
+                ans = i;
+            }
+        }
+        String meow = "";
+        for(String s: convert.keySet()){
+            if(convert.get(s)==ans){
+                meow=s;
+                break;
+            }
+        }
+        out.println(meow + " "+ mindist);
+        out.close();
+
+    }
+    public static boolean dijkstrasPath(int source,int numnodes, ArrayList<ArrayList<int[]>> edges, int[] distances, boolean[] visited, int[] parent){
+        for(int i=0; i<numnodes; i++){
+            parent[i]=-1;
+            distances[i]=Integer.MAX_VALUE;
+        }
+        distances[source]=0;
+        int nodesvisited =0;
+        while (nodesvisited<numnodes){
+            int minnode = -1;
+            int mindist = Integer.MAX_VALUE;
+            for(int i=0; i<numnodes; i++){
+                if(distances[i]<=mindist&&!visited[i]){
+                    mindist=distances[i];
+                    minnode=i;
+                }
+            }
+            if(distances[minnode]==Integer.MAX_VALUE){
+                return false;
+            }
+            visited[minnode]=true;
+            nodesvisited++;
+            for(int[] node : edges.get(minnode)){
+                if(distances[minnode]+node[1]<distances[node[0]]){
+                    distances[node[0]]=distances[minnode]+node[1];
+                    parent[node[0]]=minnode;
+                }
+            }
+
+
+        }
+        return true;
+    }
+}

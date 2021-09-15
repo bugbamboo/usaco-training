@@ -1,0 +1,65 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: zerosum
+*/
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class zerosum {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("zerosum.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("zerosum.out")),true);
+        int N = Integer.parseInt(f.readLine());
+        ArrayList<String> answers = new ArrayList<>();
+        for(int i=0; i<(int)Math.pow(3,N-1); i++){
+            String str = Integer.toString(i,3);
+            int len = str.length();
+            for(int j=0; j<(N-1)-len;j++){
+                str = "0"+str;
+            }
+            String[] wow = str.split("");
+            int[] ints = new int[wow.length];
+            for(int j=0; j<wow.length; j++){
+                ints[j]=Integer.parseInt(wow[j]);
+            }
+            String s = test(N,ints);
+            if(!s.equals("")){
+                answers.add(s);
+            }
+        }
+        Collections.sort(answers);
+        for(String s: answers){
+            out.println(s);
+        }
+        out.close();
+    }
+    public static String test(int num, int[] ans){
+        StringBuilder sb = new StringBuilder("1");
+        for(int i=0; i<ans.length; i++){
+            if(ans[i]==0){
+                sb.append(" ").append(i + 2);
+            }else if(ans[i]==1){
+                sb.append("+").append(i + 2);
+            }else if(ans[i]==2){
+                sb.append("-").append(i + 2);
+            }
+        }
+        String s = sb.toString();
+        if(eval(s)){
+            return s;
+        }
+        return "";
+    }
+    public static boolean eval(String s){
+        int i=0;
+        s = s.replaceAll("\\s", "");
+        s = s.replaceAll("-", "+-");
+        String[] strs = s.split("\\+");
+        for(String str :strs){
+            i= i+ Integer.parseInt(str);
+        }
+        return i==0;
+    }
+}

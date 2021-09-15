@@ -1,0 +1,67 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: prefix
+*/
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class prefix {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("prefix.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("prefix.out")),true);
+        ArrayList<String> primitives = new ArrayList<>();
+        HashSet<Integer> lengths = new HashSet<>();
+        StringBuilder sequenceB = new StringBuilder();
+        while (true){
+            String s = f.readLine();
+            if(s.equals(".")){
+                break;
+            }else {
+                StringTokenizer st = new StringTokenizer(s);
+                while (st.hasMoreTokens()){
+                    String meow = st.nextToken();
+                    primitives.add(meow);
+                    lengths.add(meow.length());
+                }
+            }
+        }
+        while (true){
+            String x=f.readLine();
+            if(x==null){
+                break;
+            }else{
+                sequenceB.append(x);
+            }
+        }
+        String sequence = sequenceB.toString();
+        boolean[] dp = new boolean[sequence.length()+1];
+        dp[0]=true;
+        for(int i=1; i<dp.length; i++){
+            HashMap<Integer,String > map = new HashMap<>();
+            for(int j :lengths){
+                if(j<=i){
+                    map.put(j,sequence.substring(i-j,i));
+                }
+            }
+            for(String primitiv : primitives){
+                if(i-primitiv.length()>-1&&dp[i-primitiv.length()]&&map.get(primitiv.length()).equals(primitiv)){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        int max =0;
+        for(int i=0; i<dp.length; i++){
+            if(dp[i]){
+                max=i;
+            }
+        }
+        out.println(max);
+        out.close();
+
+    }
+}

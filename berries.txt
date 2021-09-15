@@ -1,0 +1,68 @@
+import java.io.*;
+
+import java.util.*;
+
+public class berries {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("berries.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("berries.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int treeNum = Integer.parseInt(st.nextToken());
+        int bucketNum=Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(f.readLine());
+        int[] trees = new int[treeNum];
+        for(int i=0; i<treeNum; i++){
+            trees[i]=Integer.parseInt(st.nextToken());
+        }
+        int cum=-1;
+        for(int j: trees){
+            if(j>cum){
+                cum=j;
+            }
+        }
+        HashSet<Integer> answers = new HashSet<>();
+        for(int i=0; i<=cum;i++){
+           answers.add(verify(i,bucketNum,trees));
+        }
+        
+
+
+        out.println(Collections.max(answers));
+        out.close();
+
+         
+    }
+    public static int verify(int target, int bucketNum, int[] trees){
+        ArrayList<Integer> buckets = new ArrayList<>();
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer integer, Integer t1) {
+                return -1*Integer.compare(integer,t1);
+            }
+        });
+        for(int i: trees){
+            queue.add(i);
+        }
+        while (buckets.size()<bucketNum){
+            int j=queue.poll();
+            if(j<target){
+                buckets.add(j);
+                queue.add(0);
+            }
+            else {
+                buckets.add(target);
+                queue.add(j-target);
+            }
+
+        }
+        int count =0;
+        for(int i=bucketNum-1; i>bucketNum/2-1; i--){
+            count+=buckets.get(i);
+        }
+        
+        return count;
+
+
+    }
+}

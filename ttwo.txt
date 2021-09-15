@@ -1,0 +1,74 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: ttwo
+*/
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class ttwo {
+    public static void main(String[] args) throws IOException{
+        BufferedReader f=new BufferedReader(new FileReader("ttwo.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("ttwo.out")));
+        int[][] board = new int[10][10];
+        int[] cowpos = new int[2];
+        int[] farmpos = new int[2];
+        for(int i=0; i<10; i++){
+            String[] s = f.readLine().split("");
+            for(int j=0; j<10; j++){
+                if(s[j].equals("*")){
+                    board[i][j]=-1;
+                }
+                if(s[j].equals(".")){
+                    board[i][j]=0;
+                }
+                if(s[j].equals("C")){
+                    board[i][j]=0;
+                    cowpos=new int[]{i,j};
+                }
+                if(s[j].equals("F")){
+                    board[i][j]=0;
+                    farmpos= new int[]{i,j};
+                }
+            }
+        }
+
+        int[][] rot = new int[][]{{-1,0},{0,1},{1,0},{0,-1}};
+        int cowrot =0;
+        int farmrot =0;
+        int nummove = 0;
+        while (nummove<160001){
+
+            if(Arrays.equals(cowpos,farmpos)){
+                break;
+            }
+            nummove++;
+            int newX = cowpos[0]+rot[cowrot][0];
+            int newY = cowpos[1]+rot[cowrot][1];
+            if (!(newX>-1&&newX<10&&newY>-1&&newY<10&&board[newX][newY]!=-1)){
+                cowrot=(cowrot+1)%4;
+                newX = cowpos[0];
+                newY = cowpos[1];
+            }
+            cowpos[0]=newX;
+            cowpos[1]=newY;
+            int fnewX = farmpos[0]+rot[farmrot][0];
+            int fnewY = farmpos[1]+rot[farmrot][1];
+            if (!(fnewX>-1&&fnewX<10&&fnewY>-1&&fnewY<10&&board[fnewX][fnewY]!=-1)){
+                farmrot=(farmrot+1)%4;
+                fnewX = farmpos[0];
+                fnewY = farmpos[1];
+            }
+            farmpos[0]=fnewX;
+            farmpos[1]=fnewY;
+        }
+        if(nummove==160001){
+            out.println(0);
+        }else {
+            out.println(nummove);
+        }
+        out.close();
+
+    }
+}

@@ -1,0 +1,67 @@
+import java.io.*;
+import java.util.*;
+
+public class fcolor {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("fcolor.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("fcolor.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int CowNum = Integer.parseInt(st.nextToken());
+        int checkNum = Integer.parseInt(st.nextToken());
+        int[][] admires = new int[checkNum][2];
+        for(int i=0; i<checkNum; i++){
+            st = new StringTokenizer(f.readLine());
+            admires[i][0]= Integer.parseInt(st.nextToken())-1;
+            admires[i][1]=Integer.parseInt(st.nextToken())-1;
+        }
+        Arrays.sort(admires, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+               return Integer.compare(ints[1],t1[1]);
+            }
+        });
+        DisjointUnionSets set = new DisjointUnionSets(CowNum);
+        int index =0;
+        int moving =0;
+
+       for(int i=0; i<30; i++) {
+           index=0;
+           moving=0;
+           while (index < admires.length) {
+               while (index < admires.length && set.find(admires[index][1]) == set.find(admires[moving][1])) {
+                   set.union(admires[index][0], admires[moving][0]);
+                   if (index != moving) {
+                       System.out.println(admires[index][0] + " " + admires[moving][0]);
+                   }
+                   index++;
+               }
+               moving = index;
+           }
+       }
+        HashMap<Integer, ArrayList<Integer>> colors = new HashMap<>();
+        for(int i=0; i<CowNum; i++){
+            int x = set.find(i);
+            if(colors.containsKey(x)){
+                colors.get(x).add(i);
+            }else{
+                colors.put(x, new ArrayList<Integer>());
+                colors.get(x).add(i);
+            }
+        }
+        int color =1;
+        System.out.println(colors.keySet().size());
+        int[] answer=new int[CowNum];
+        for(int i=0; i<CowNum; i++){
+            if(answer[i]==0){
+                for(Integer j: colors.get(set.find(i))){
+                    answer[j]=color;
+                }
+                color++;
+            }
+        }
+        for(int i=0; i<CowNum; i++){
+            out.print(answer[i]);
+        }
+        out.close();
+    }
+}

@@ -1,0 +1,53 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: stamps
+*/
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class stamps {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("stamps.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("stamps.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int stampcount = Integer.parseInt(st.nextToken());
+        int valcount = Integer.parseInt(st.nextToken());
+        int[] stamps = new int[valcount];
+        int rows = (int)Math.ceil(valcount/15.0);
+        int counter =0;
+        for(int i=0; i<rows; i++){
+            st = new StringTokenizer(f.readLine());
+            while (st.hasMoreTokens()) {
+                stamps[counter] = Integer.parseInt(st.nextToken());
+                counter++;
+            }
+        }
+        int max = Integer.MIN_VALUE;
+        for(int i=0; i<valcount; i++){
+            if(max<stamps[i]){
+                max=stamps[i];
+            }
+        }
+        int[] dp = new int[max*stampcount+1];
+        System.out.println(Arrays.toString(stamps));
+        int currmax = 0;
+        for(int i=1; i<dp.length; i++){
+            dp[i]=stampcount+1;
+            for(int j:stamps){
+                if(i-j>-1){
+                    dp[i]= Math.min(dp[i], dp[i - j] + 1);
+                }
+            }
+            if(dp[i]<=stampcount){
+                currmax++;
+            }else{
+                break;
+            }
+        }
+        out.println(currmax);
+        out.close();
+    }
+
+}

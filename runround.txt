@@ -1,0 +1,47 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: runround
+*/
+import java.io.*;
+import java.util.HashSet;
+
+public class runround {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("runround.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("runround.out")),true);
+        long start = Long.parseLong(f.readLine())+1;
+        while (true){
+            if(isRunaround(start)){
+                out.println(start);
+                out.close();
+                return;
+            }
+            start++;
+        }
+
+    }
+    public static boolean isRunaround(long x){
+        String real = String.valueOf(x);
+        char[] chars = real.toCharArray();
+        HashSet<Character> set = new HashSet<>();
+        for(int i=0; i<real.length(); i++){
+            set.add(chars[i]);
+        }
+        if(set.size()<chars.length||set.contains('0')){
+            return false;
+        }
+        set.clear();
+        int index =0;
+        while (set.size()<real.length()){
+            if(set.contains(chars[index])){
+                return false;
+            }
+            set.add(chars[index]);
+            index+=Integer.parseInt(String.valueOf(chars[index]));
+            index = index % chars.length;
+        }
+        return index==0;
+
+    }
+}

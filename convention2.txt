@@ -1,0 +1,68 @@
+import java.io.*;
+import java.util.*;
+
+public class convention2 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("convention2.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("convention2.out")),true);
+        int cowsnum = Integer.parseInt(f.readLine());
+        int[][] cows = new int[cowsnum][3];
+        for(int i=0; i<cowsnum; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            cows[i][0]=cowsnum-i;
+            cows[i][1]=Integer.parseInt(st.nextToken());
+            cows[i][2]=Integer.parseInt(st.nextToken());
+        }
+        PriorityQueue<int[]> queue = new PriorityQueue<>(new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+                return -1*Integer.compare(ints[0],t1[0]);
+            }
+        });
+
+        Arrays.sort(cows, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+                return Integer.compare(ints[1],t1[1]);
+            }
+        });
+        int index=0;
+        int time = cows[0][1];
+
+        ArrayList<Integer> delay = new ArrayList<>();
+        while (index<cowsnum && time>=cows[index][1]){
+            queue.add(cows[index]);
+            index++;
+        }
+        while(queue.size()>0){
+
+                int[] curr = queue.poll();
+
+
+                delay.add(time - curr[1]);
+                time = time + curr[2];
+
+
+            while (index<cowsnum&&time>=cows[index][1]){
+                queue.add(cows[index]);
+                index++;
+
+            }
+            if(queue.size()==0&&index<cowsnum){
+                time=cows[index][1];
+
+            }
+            while (index<cowsnum&&time>=cows[index][1]){
+                queue.add(cows[index]);
+                index++;
+            }
+
+
+        }
+
+        out.println(Collections.max(delay));
+        out.close();
+
+
+    }
+}

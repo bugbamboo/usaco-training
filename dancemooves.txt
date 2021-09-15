@@ -1,0 +1,70 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class dancemooves {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int numcow = Integer.parseInt(st.nextToken());
+        int numswap = Integer.parseInt(st.nextToken());
+        int[][] swaps = new int[numswap][2];
+        int[] cows = new int[numcow];
+        for(int i=0; i<numswap; i++){
+            st = new StringTokenizer(f.readLine());
+            swaps[i][0] = Integer.parseInt(st.nextToken())-1;
+            swaps[i][1]=Integer.parseInt(st.nextToken())-1;
+        }
+        for(int i=0; i<numcow; i++){
+            cows[i]=i;
+        }
+        ArrayList<HashSet<Integer>> sets = new ArrayList<>();
+        for(int i=0; i<numcow; i++){
+            sets.add(new HashSet<>());
+            sets.get(i).add(i);
+        }
+        for(int[] swap : swaps){
+            int temp = cows[swap[0]];
+            sets.get(cows[swap[0]]).add(swap[1]);
+            sets.get(cows[swap[1]]).add(swap[0]);
+            cows[swap[0]]=cows[swap[1]];
+            cows[swap[1]]=temp;
+
+        }
+        int[] movements = new int[numcow];
+        for(int i=0; i<numcow; i++){
+            movements[cows[i]]=i;
+        }
+        int[] answers = new int[numcow];
+        boolean[] processed = new boolean[numcow];
+        for(int i=0;i<numcow; i++ ){
+            if(!processed[i]){
+               ArrayList<Integer> cycle = new ArrayList<>();
+               cycle.add(i);
+               processed[i]=true;
+               int current =movements[i];
+               while (current!=i){
+                   processed[current]=true;
+                   cycle.add(current);
+                   current=movements[current];
+               }
+               HashSet<Integer> fin = new HashSet<>();
+               for(Integer x : cycle){
+                   fin.addAll(sets.get(x));
+               }
+               for(Integer x : cycle){
+                   answers[x]=fin.size();
+               }
+            }
+        }
+        StringBuilder out = new StringBuilder();
+        for (int j = 0; j <numcow; j++) {
+            out.append(answers[j]).append('\n');
+        }
+        System.out.print(out);
+    }
+}

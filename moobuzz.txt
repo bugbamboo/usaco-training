@@ -4,14 +4,17 @@ public class moobuzz {
     public static void main(String[] args) throws IOException {
         BufferedReader f = new BufferedReader(new FileReader("moobuzz.in"));
         PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("moobuzz.out")),true);
-        long target = Integer.parseInt(f.readLine());
+        long target = Long.parseLong(f.readLine());
 
         long pos =0;
-        for(long a=Integer.MAX_VALUE;a>=1;a/=2){
+        for(long a=Long.MAX_VALUE;a>=1;a/=2){
             while(verify(pos+a,target)){
                 pos+=a;
 
             }
+        }
+        while(pos%3==0||pos%5==0){
+            pos--;
         }
         out.println(pos);
         out.close();

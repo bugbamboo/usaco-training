@@ -1,0 +1,40 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: nocows
+*/
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class nocows {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("nocows.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("nocows.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int numcow = Integer.parseInt(st.nextToken());
+        int maxdepth = Integer.parseInt(st.nextToken());
+        long[][] dp = new long[maxdepth+1][numcow+1];
+        dp[1][1]=1;
+        for(int i=1; i<=maxdepth; i++){
+            for(int j=1; j<=numcow; j+=2){
+                if(!(i==1&&j==1)){
+                    int target = j-1;
+
+                    if(target==0){
+                        dp[i][j]+=1;
+                        dp[i][j]%=9901;
+                    }
+                    for(int h=1; h<target; h+=2){
+                        dp[i][j]+=(dp[i-1][h]*dp[i-1][target-h])%9901;
+                        dp[i][j]%=9901;
+                    }
+                }
+            }
+        }
+     
+        out.println(((dp[maxdepth][numcow]-dp[maxdepth-1][numcow])+9901)%9901);
+        out.close();
+
+    }
+}

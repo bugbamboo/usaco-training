@@ -1,0 +1,75 @@
+import java.io.*;
+import java.util.*;
+
+public class measurement {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("measurement.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("measurement.out")));
+        StringTokenizer st = new StringTokenizer( f.readLine());
+        int measure = Integer.parseInt(st.nextToken());
+        int G= Integer.parseInt(st.nextToken());
+        int[][] meow = new int[measure][3];
+        for(int i=0; i<measure; i++){
+            st = new StringTokenizer(f.readLine());
+            meow[i][0]=Integer.parseInt(st.nextToken());
+            meow[i][1]=Integer.parseInt(st.nextToken());
+            meow[i][2]=Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(meow, new java.util.Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return Integer.compare(a[0], b[0]);
+            }
+        });
+        int maxvalue=0;
+        SortedMap<Integer, HashSet<Integer>> leaderboard = new TreeMap<>();
+        SortedMap<Integer, HashSet<Integer>> leaderboardCopy = new TreeMap<>();
+        HashMap<Integer, Integer> scores = new HashMap<>();
+        scores.put(Integer.MAX_VALUE, 0);
+        leaderboard.put(0,new HashSet<>());
+        leaderboard.get(0).add(Integer.MAX_VALUE);
+        leaderboardCopy.put(0,new HashSet<>());
+        leaderboardCopy.get(0).add(Integer.MAX_VALUE);
+        for(int[] i: meow){
+            scores.put(i[1],0);
+            leaderboard.get(0).add(i[1]);
+            leaderboardCopy.get(0).add(i[1]);
+        }
+        int count =0;
+        for(int i=0; i<measure; i++){
+            int currscore = scores.get(meow[i][1]);
+            int newscore = currscore+meow[i][2];
+            leaderboard.get(currscore).remove(meow[i][1]);
+            if(leaderboard.get(currscore).size()==0){
+                leaderboard.remove(currscore);
+            }
+            if(leaderboard.containsKey(newscore)){
+                leaderboard.get(newscore).add(meow[i][1]);
+            }else{
+                leaderboard.put(newscore,new HashSet<>());
+                leaderboard.get(newscore).add(meow[i][1]);
+            }
+            
+            if(!leaderboard.get(leaderboard.lastKey()).equals(leaderboardCopy.get(leaderboardCopy.lastKey()))){
+                
+                count++;
+
+            }
+            leaderboardCopy.get(currscore).remove(meow[i][1]);
+            if(leaderboardCopy.get(currscore).size()==0){
+                leaderboardCopy.remove(currscore);
+            }
+            if(leaderboardCopy.containsKey(newscore)){
+                leaderboardCopy.get(newscore).add(meow[i][1]);
+            }else{
+                leaderboardCopy.put(newscore,new HashSet<>());
+                leaderboardCopy.get(newscore).add(meow[i][1]);
+            }
+            scores.put(meow[i][1],newscore);
+
+        }
+        out.println(count);
+        out.close();
+
+
+    }
+}

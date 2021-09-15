@@ -1,0 +1,38 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: inflate
+*/
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class inflate {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("inflate.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("inflate.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int totlen = Integer.parseInt(st.nextToken());
+        int numprob = Integer.parseInt(st.nextToken());
+
+        int[][] probs = new int[numprob][2];
+        int[] meow = new int[totlen+1];
+        for(int i=0; i<numprob; i++){
+            st = new StringTokenizer(f.readLine());
+            probs[i][0]=Integer.parseInt(st.nextToken());
+            probs[i][1]=Integer.parseInt(st.nextToken());
+        }
+        for(int i=0; i<meow.length; i++){
+
+            for(int j=0; j<probs.length; j++){
+                if(i-probs[j][1]>-1){
+                    if(meow[i]<probs[j][0]+meow[i-probs[j][1]]){
+                        meow[i] = probs[j][0]+meow[i-probs[j][1]];
+                    }
+                }
+
+            }
+        }
+        out.println(meow[totlen]);
+        out.close();
+    }
+}

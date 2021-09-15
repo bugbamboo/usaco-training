@@ -1,0 +1,196 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: cowtour
+*/
+import java.io.*;
+        import java.text.DecimalFormat;
+        import java.util.*;
+
+public class cowtour {
+    private static DecimalFormat df2 = new DecimalFormat("0.000000");
+
+    public static void main(String[] args) throws IOException {
+
+        BufferedReader f=new BufferedReader(new FileReader("cowtour.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("cowtour.out")));
+        int numcow = Integer.parseInt(f.readLine());
+        int[][] locs = new int[numcow][2];
+        for(int i=0; i<numcow; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            locs[i][0]=Integer.parseInt(st.nextToken());
+            locs[i][1]=Integer.parseInt(st.nextToken());
+
+        }
+        disjointunionset components = new disjointunionset(numcow);
+        ArrayList<int[]> edges = new ArrayList<>();
+        int[][] adjmatrix = new int[numcow][numcow];
+        for(int i=0; i<numcow; i++){
+            String[] s = f.readLine().split("");
+            for(int j=0; j<numcow; j++){
+                adjmatrix[i][j]=Integer.parseInt(s[j]);
+                if(adjmatrix[i][j]==1){
+                    edges.add(new int[]{i,j});
+                    components.union(i,j);
+                }
+            }
+        }
+        ArrayList<ArrayList<Integer>> groups = new ArrayList<>();
+        ArrayList<ArrayList<double[]>> edgegroups = new ArrayList<>();
+        HashMap<Integer, Integer> sort = new HashMap<>();
+        int counter =0;
+        for(int i=0; i<numcow; i++){
+            int found = components.find(i);
+            if(!sort.containsKey(found)){
+                sort.put(found,counter);
+                counter++;
+                groups.add(new ArrayList<>());
+            }
+            groups.get(sort.get(found)).add(i);
+
+        }
+        for(int i=0; i<groups.size(); i++){
+            edgegroups.add(new ArrayList<>());
+        }
+        for(int[] edge : edges){
+            double[] edge2 = new double[3];
+            edge2[0]=edge[0];
+            edge2[1]=edge[1];
+            edge2[2]=Math.sqrt((locs[edge[0]][0]-locs[edge[1]][0])*(locs[edge[0]][0]-locs[edge[1]][0])+(locs[edge[0]][1]-locs[edge[1]][1])*(locs[edge[0]][1]-locs[edge[1]][1]));
+            edgegroups.get(sort.get(components.find(edge[0]))).add(edge2);
+        }
+        HashMap<Integer,Double> fulld = new HashMap<>();
+        HashMap<Integer,Double> diameter = new HashMap<>();
+        HashMap<Integer,Integer> translate = new HashMap<>();
+        for(int i=0; i<edgegroups.size(); i++){
+            int numc = groups.get(i).size();
+            int nume = edgegroups.get(i).size();
+            for(int j=0; j<numc; j++){
+                translate.put(groups.get(i).get(j),j);
+            }
+            ArrayList<ArrayList<double[]>> adjlist = new ArrayList<>();
+            for(int meow =0; meow<numc; meow++){
+                adjlist.add(new ArrayList<>());
+            }
+            for(double[] edge :edgegroups.get(i)){
+                adjlist.get(translate.get((int)edge[0])).add(new double[]{translate.get((int)edge[1]),edge[2]});
+                adjlist.get(translate.get((int)edge[1])).add(new double[]{translate.get((int)edge[0]),edge[2]});
+            }
+            double meow  =0;
+            for(int l=0; l<numc; l++){
+                double[] distances = new double[numc];
+                boolean[] visited = new boolean[numc];
+                dijkstrasPath(l, numc, adjlist, distances,visited);
+                double max = 0;
+                for(double x: distances){
+                    if(max<x){
+                        max=x;
+                    }
+                    if(meow<x){
+                        meow=x;
+                    }
+                }
+                diameter.put(groups.get(i).get(l),max);
+            }
+            fulld.put(i,meow);
+        }
+
+        System.out.println(diameter);
+        double min = Double.MAX_VALUE;
+        for(int i=0; i<numcow; i++){
+            for(int j=0; j<numcow;j++){
+                if(components.find(i)!=components.find(j)){
+                    double mew = Math.max(fulld.get(sort.get(components.find(i))),fulld.get(sort.get(components.find(j))));
+                    double an1 = diameter.get(i);
+                    double an2 = diameter.get(j);
+                    double an3 =Math.sqrt((locs[i][0]-locs[j][0])*(locs[i][0]-locs[j][0])+(locs[i][1]-locs[j][1])*(locs[i][1]-locs[j][1]));
+                    if(min>Math.max(mew, an1+an2+an3)){
+                        min=Math.max(mew,an1+an2+an3);
+                    }
+                }
+            }
+        }
+        System.out.println(edgegroups.size());
+
+        double x = min;
+
+        out.println(df2.format(x));
+        out.close();
+
+
+    }
+    public static boolean dijkstrasPath(int source,int numnodes, ArrayList<ArrayList<double[]>> edges, double[] distances, boolean[] visited){
+        for(int i=0; i<numnodes; i++){
+            distances[i]=Double.MAX_VALUE;
+        }
+        distances[source]=0;
+        int nodesvisited =0;
+        while (nodesvisited<numnodes){
+            double minnode = -1;
+            double mindist = Double.MAX_VALUE;
+            for(int i=0; i<numnodes; i++){
+                if(distances[i]<=mindist&&!visited[i]){
+                    mindist=distances[i];
+                    minnode=i;
+                }
+            }
+            if(distances[(int)minnode]== Double.MAX_VALUE){
+                return false;
+            }
+            int intnode = (int)minnode;
+            visited[intnode]=true;
+            nodesvisited++;
+            for(double[] node : edges.get(intnode)){
+                if(distances[intnode]+node[1]<distances[(int)node[0]]){
+                    distances[(int)node[0]]=distances[intnode]+node[1];
+                }
+            }
+
+
+        }
+        return true;
+    }
+}
+class disjointunionset {
+    int[] rank, parent;
+    int n;
+    public disjointunionset(int n) {
+        rank = new int[n];
+        parent = new int[n];
+        this.n = n;
+        makeSet();
+    }
+    void makeSet() {
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+
+        return parent[x];
+    }
+    void union(int x, int y) {
+        int xRoot = find(x), yRoot = find(y);
+        if (xRoot == yRoot) {
+            return;
+        }
+        if (rank[xRoot] < rank[yRoot]) {
+            parent[xRoot] = yRoot;
+        }
+        else if (rank[yRoot] < rank[xRoot]) {
+            parent[yRoot] = xRoot;
+        }
+        else
+        {
+            parent[yRoot] = xRoot;
+            rank[xRoot] = rank[xRoot] + 1;
+        }
+    }
+}
+
+
+
+

@@ -1,0 +1,142 @@
+import java.io.*;
+import java.util.HashSet;
+
+public class mazetactoe {
+    static HashSet<Integer> wins = new HashSet<>();
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+        
+        int x = Integer.parseInt(f.readLine());
+        int cowX=0;
+        int cowY=0;
+        int[][] grid = new int[x][x];
+        boolean[][][] seen = new boolean[19862][x][x];
+        for(int i=0; i<x; i++){
+            String s = f.readLine();
+            for(int j=0; j<x; j++){
+                grid[i][j]=convert(s.substring(j*3,j*3+3));
+                if(s.substring(j*3,j*3+3).equals("BBB")){
+                    cowX=i;
+                    cowY=j;
+                }
+            }
+        }
+        search(0,cowX,cowY,seen,grid);
+        System.out.println(wins.size());
+
+
+
+    }
+    public static void search(int board, int x, int y, boolean[][][] seen,int[][] map){
+        seen[board][x][y]=true;
+
+        if(isWon(board)){
+            wins.add(board);
+            return;
+        }
+        int current = board;
+        if(map[x][y]!=0&&isValid(board, map[x][y])){
+            current+=map[x][y];
+        }
+        seen[current][x][y]=true;
+        if(isWon(current)){
+            wins.add(current);
+            return;
+        }
+        if(map[x+1][y]!=-1&&!seen[current][x+1][y]){
+            search(current,x+1,y,seen,map);
+        }
+        if(map[x-1][y]!=-1&&!seen[current][x-1][y]){
+            search(current,x-1,y,seen,map);
+        }
+        if(map[x][y+1]!=-1&&!seen[current][x][y+1]){
+            search(current,x,y+1,seen,map);
+        }
+        if(map[x][y-1]!=-1&&!seen[current][x][y-1]){
+            search(current,x,y-1,seen,map);
+        }
+
+    }
+    public static boolean isValid(int board, int i){
+        String str =convertToBase3(board);
+        int index = 8-((int)(Math.log(i)/Math.log(3)+0.01));
+        return str.charAt(index)=='0';
+    }
+
+    public static String convertToBase3(int N){
+        String result = "";
+        while(N>0){
+            int rem = N%3;
+            N = N/3;
+            result = rem + result;
+        }
+        int f=result.length();
+        for(int i=0; i<9-f; i++){
+            result="0"+result;
+        }
+
+        return result;
+    }
+    public static boolean isWon(int board){
+        String str = convertToBase3(board);
+        for(int i=0; i<3; i++){
+            String row = str.substring(i*3,i*3+3);
+            String column = str.charAt(i)+""+str.charAt(i+3)+""+str.charAt(i+6);
+            if(row.equals("211")||row.equals("112")||column.equals("211")||column.equals("112")){
+                return true;
+            }
+
+        }
+        String diag1 = str.charAt(0)+""+str.charAt(4)+""+str.charAt(8);
+        String diag2 = str.charAt(2)+""+str.charAt(4)+""+str.charAt(6);
+        return diag1.equals("211")||diag1.equals("112")||diag2.equals("211")||diag2.equals("112");
+    }
+    public static int convert(String s){
+        switch (s){
+            case "MMM":
+                return 0;
+            case "...":
+                return 0;
+            case "###":
+                return -1;
+            case "O11":
+                return 6561;
+            case "M11":
+                return 13122;
+            case "O12":
+                return 2187;
+            case "M12":
+                return 4374;
+            case "O13":
+                return 729;
+            case "M13":
+                return 1458;
+            case "O21":
+                return 243;
+            case "M21":
+                return 486;
+            case "O22":
+                return 81;
+            case "M22":
+                return 162;
+            case "O23":
+                return 27;
+            case "M23":
+                return 54;
+            case "O31":
+                return 9;
+            case "M31":
+                return 18;
+            case "O32":
+                return 3;
+            case "M32":
+                return 6;
+            case "O33":
+                return 1;
+            case "M33":
+                return 2;
+
+        }
+        return 0;
+    }
+}

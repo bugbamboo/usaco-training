@@ -1,0 +1,66 @@
+import java.io.*;
+import java.util.*;
+
+public class herding {
+    public static void main(String[] args)throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("herding.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("herding.out")));
+        int numcows = Integer.parseInt(f.readLine());
+        int[] cows = new int[numcows];
+        for(int i=0; i<numcows; i++){
+            cows[i]=Integer.parseInt(f.readLine());
+        }
+        Arrays.sort(cows);
+        int gapsum =0;
+        for(int i=1; i<cows.length-2;i++){
+            gapsum+=(cows[i+1]-cows[i]-1);
+        }
+        HashSet<Integer> seen = new HashSet<>();
+        gapsum+=Math.max((cows[1]-cows[0])-1,(cows[cows.length-1]-cows[cows.length-2])-1);
+        int min =-1;
+        ArrayList<Integer> mins = new ArrayList<>();
+        for(int i=0; i<cows.length; i++){
+            if(!seen.contains(i)){
+            int len = 0;
+            System.out.println(cows[i]);
+            System.out.println("uwu");
+            while (i+len<cows.length &&cows[i+len]<=cows[i]+(cows.length-1)){
+                System.out.println(cows[i+len]);
+                seen.add(i+len);
+
+                len++;
+
+            }
+            System.out.println("meow");
+            if(len==cows.length){
+                min=0;
+                break;
+            }
+            if(len==cows.length-1&&cows[i+len-1]!=cows[i]+(cows.length-1)){
+                System.out.println(len);
+                System.out.println("meow");
+                int gap =Math.max(cows[1]-cows[0]-1,cows[cows.length-1]-cows[cows.length-2]-2);
+                if(gap>1){
+                    min =2;
+                    break;
+                }else{
+                    min=1;
+                    break;
+                }
+            }else{
+            mins.add(len);
+            }
+        }}
+        System.out.println(mins);
+        if(min==-1){
+            min = Collections.max(mins);
+            min = cows.length-(min);
+        }
+        out.println(min);
+        out.println(gapsum);
+        out.close();
+
+    }
+
+
+}

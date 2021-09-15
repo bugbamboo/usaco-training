@@ -1,58 +1,159 @@
 import java.io.*;
+import java.util.*;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.StringTokenizer;
-class triangles {
-    public static void main(String[] args) throws IOException{
-        HashSet<Integer> hSetNumbers = new HashSet<Integer>();
+public class triangles {
+    public static void main(String[] args) throws IOException {
         BufferedReader f = new BufferedReader(new FileReader("triangles.in"));
-        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("triangles.out")));
-        int num = Integer.parseInt(f.readLine());
-        int[][] points = new int[num][2];
-        for(int i=0; i<num; i++){
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("triangles.out")),true);
+        int pointnum = Integer.parseInt(f.readLine());
+        long mod = 1000000000+7;
+        Points[] points = new Points[pointnum];
+        for(int i=0;i<pointnum;i++){
             StringTokenizer st = new StringTokenizer(f.readLine());
-            points[i][0]=Integer.parseInt(st.nextToken());
-            points[i][1]=Integer.parseInt(st.nextToken());
+            long x = Long.parseLong(st.nextToken())+10000;
+            long y = Long.parseLong(st.nextToken())+10000;
+            points[i]=new Points(x,y);
         }
-        //System.out.println(Arrays.deepToString(points));
-        //System.out.println(area(points[0],points[2],points[3]));
-        for(int[] i: points){
-            for(int j: samex(points,i)){
-                for(int k : samey(points,i)){
-                    hSetNumbers.add(area(i,points[j],points[k]));
+        Points[] sorty = new Points[pointnum];
+        Points[] sortx = new Points[pointnum];
+        for(int i=0; i<pointnum;i++){
+            sortx[i]=points[i];
+            sorty[i]=points[i];
+        }
+        Arrays.sort(sortx, new Comparator<Points>() {
+            @Override
+            public int compare(Points points, Points t1) {
+                if(points.x != t1.x){
+                    return Long.compare(points.x,t1.x);
+                }else {
+                    return Long.compare(points.y,t1.y);
+                }
 
+            }
+        });
+        Arrays.sort(sorty, new Comparator<Points>() {
+            @Override
+            public int compare(Points points, Points t1) {
+                if(points.y != t1.y){
+                    return Long.compare(points.y,t1.y);
+                }else {
+                    return Long.compare(points.x,t1.x);
                 }
             }
+        });
+        ArrayList<ArrayList<Points>> groupX = new ArrayList<>();
+        ArrayList<ArrayList<Points>> groupY = new ArrayList<>();
+        long CurrentX = sortx[0].x;
+        long CurrentY = sorty[0].y;
+        int indexX = 0;
+        int indexY=0;
+        groupX.add(new ArrayList<>());
+        groupY.add(new ArrayList<>());
+        for(int i=0; i<pointnum; i++){
+            if(sortx[i].x==CurrentX){
+                groupX.get(indexX).add(sortx[i]);
+
+            }else{
+                groupX.add(new ArrayList<>());
+                indexX++;
+                groupX.get(indexX).add(sortx[i]);
+                CurrentX=sortx[i].x;
+            }
+            if(sorty[i].y==CurrentY){
+                groupY.get(indexY).add(sorty[i]);
+
+            }else{
+                groupY.add(new ArrayList<>());
+                indexY++;
+                groupY.get(indexY).add(sorty[i]);
+                CurrentY=sorty[i].y;
+            }
         }
-        out.println(Collections.max(hSetNumbers));
+        HashMap<Points,int[]> mapX =new HashMap<>();
+        HashMap<Points,int[]> mapY = new HashMap<>();
+        for(int i=0; i< groupX.size(); i++){
+            for(int j=0; j<groupX.get(i).size();j++){
+                mapX.put(groupX.get(i).get(j),new int[]{i,j});
+            }
+        }
+        for(int i=0; i< groupY.size(); i++){
+            for(int j=0; j<groupY.get(i).size(); j++){
+                mapY.put(groupY.get(i).get(j),new int[]{i,j});
+            }
+        }
+        ArrayList<long[][]> XSUM = new ArrayList<>();
+        ArrayList<long[][]> YSUM = new ArrayList<>();
+        for(int i=0; i<groupX.size(); i++){
+            long a = 0;
+            long b=0;
+            long[] differences = new long[groupX.get(i).size()-1];
+            for(int j=1; j<groupX.get(i).size();j++){
+                differences[j-1]=groupX.get(i).get(j).y-groupX.get(i).get(j-1).y;
+            }
+            for(int j=0; j<groupX.get(i).size()-1;j++){
+                a+=differences[j]*((groupX.get(i).size()-1)-j);
+
+            }
+            for(int j=differences.length-1; j>-1; j--){
+                b+=differences[j]*(j+1);
+            }
+            long[] ans1 = new long[groupX.get(i).size()];
+            long[] ans2 = new long[groupX.get(i).size()];
+            ans1[0]=a;
+            ans2[ans2.length-1]=b;
+            for(int j=1; j< ans1.length; j++){
+                ans1[j]=ans1[j-1]-(ans1.length-j)*differences[j-1];
+            }
+
+            for(int j=ans2.length-2; j>-1; j--){
+                ans2[j]=ans2[j+1]-(j+1)*differences[j];
+            }
+            XSUM.add(new long[][]{ans1,ans2});
+        }
+        for(int i=0; i<groupY.size(); i++){
+            long a = 0;
+            long b=0;
+            long[] differences = new long[groupY.get(i).size()-1];
+            for(int j=1; j<groupY.get(i).size();j++){
+                differences[j-1]=groupY.get(i).get(j).x-groupY.get(i).get(j-1).x;
+            }
+
+            for(int j=0; j<groupY.get(i).size()-1;j++){
+                a+=differences[j]*((groupY.get(i).size()-1)-j);
+
+            }
+            for(int j=differences.length-1; j>-1; j--){
+                b+=differences[j]*(j+1);
+            }
+            long[] ans1 = new long[groupY.get(i).size()];
+            long[] ans2 = new long[groupY.get(i).size()];
+            ans1[0]=a;
+            ans2[ans2.length-1]=b;
+            for(int j=1; j< ans1.length; j++){
+                ans1[j]=ans1[j-1]-(ans1.length-j)*differences[j-1];
+            }
+
+            for(int j=ans2.length-2; j>-1; j--){
+                ans2[j]=ans2[j+1]-(j+1)*differences[j];
+            }
+            YSUM.add(new long[][]{ans1,ans2});
+        }
+        long ans = 0;
+        for(Points point : sortx){
+            ans+=((XSUM.get(mapX.get(point)[0])[0][mapX.get(point)[1]]+XSUM.get(mapX.get(point)[0])[1][mapX.get(point)[1]])*(YSUM.get(mapY.get(point)[0])[0][mapY.get(point)[1]]+YSUM.get(mapY.get(point)[0])[1][mapY.get(point)[1]]))%mod;
+        }
+        out.println(ans%mod);
         out.close();
-
     }
-    static int area(int[] a, int[] b, int[] c){
-
-        return Math.abs((a[0]*(b[1]-c[1]))+(b[0]*(c[1]-a[1]))+(c[0]*(a[1]-b[1])));
+}
+class Points{
+    public long x;
+    public long y;
+    public Points(long x, long y){
+        this.x=x;
+        this.y=y;
     }
-    static Integer[] samex(int[][] list,int[] point){
-        HashSet<Integer> h = new HashSet<Integer>();
-        for(int i=0;i< list.length; i++){
-
-            if(list[i][0]==point[0]){
-                h.add(i);
-            }
-        }
-        Integer[] arr= h.toArray(new Integer[h.size()]);
-        return arr;
-    }
-    static Integer[] samey(int[][] list,int[] point){
-        HashSet<Integer> h = new HashSet<Integer>();
-        for(int i=0;i< list.length; i++){
-
-            if(list[i][1]==point[1]){
-                h.add(i);
-            }
-        }
-        Integer[] arr= h.toArray(new Integer[h.size()]);
-        return arr;
+    public String toString(){
+        return "Point x: "+ x + " Point y: "+y;
     }
 }

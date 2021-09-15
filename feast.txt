@@ -1,0 +1,45 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class feast {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("feast.in"));
+        PrintWriter out = new PrintWriter(new FileWriter("feast.out"));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int lim = Integer.parseInt(st.nextToken());
+        int orange = Integer.parseInt(st.nextToken());
+        int lemon = Integer.parseInt(st.nextToken());
+        int numhalfs =(int)(Math.log(lim) / Math.log(2))+2;
+
+        boolean[][] all = new boolean[2][lim+1];
+        all[0][0]=true;
+        for(int j=0; j<2; j++) {
+            for(int i=0; i<all[0].length; i++){
+                if(j>0) {
+                    if (all[j - 1][i]){
+                        all[j][i/2]=true;
+                    }
+                }
+            }
+            for (int i = 0; i < all[0].length; i++) {
+                all[j][i] = all[j][i]||((i - orange > -1) && all[j][i - orange]) || ((i - lemon > -1) && all[j][i - lemon]);
+            }
+        }
+        for(int i=lim; i>-1; i--){
+            boolean meow = false;
+            for(int j=0; j<2;j++){
+                if(all[j][i]){
+                    meow=true;
+                    break;
+                }
+            }
+            if(meow){
+                out.println(i);
+                out.close();
+                break;
+            }
+
+        }
+    }
+}

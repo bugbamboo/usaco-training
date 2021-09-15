@@ -1,0 +1,53 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
+public class cereal {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("cereal.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("cereal.out")),true);
+        StringTokenizer st= new StringTokenizer(f.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int[][] cows = new int[N][2];
+        HashMap<Integer, Integer>cowtobox = new HashMap<>();
+        HashMap<Integer, Integer> boxtocow = new HashMap<>();
+        for(int i=0; i<N; i++){
+            st = new StringTokenizer(f.readLine());
+            cows[i][0]= Integer.parseInt(st.nextToken());
+            cows[i][1]=Integer.parseInt(st.nextToken());
+        }
+        ArrayList<Integer> answers = new ArrayList<>();
+        for(int i=N-1; i>-1; i--){
+
+            if(!boxtocow.containsKey(cows[i][0])){
+                boxtocow.put(cows[i][0],i);
+                cowtobox.put(i,cows[i][0]);
+            }else{
+                int x = boxtocow.get(cows[i][0]);
+                boxtocow.put(cows[i][0],i);
+                cowtobox.put(i,cows[i][0]);
+                cowtobox.remove(x);
+                while(!boxtocow.containsKey(cows[x][1])||boxtocow.get(cows[x][1])>x){
+                    if(boxtocow.containsKey(cows[x][1])) {
+                        int y = boxtocow.get(cows[x][1]);
+                        boxtocow.put(cows[x][1], x);
+                        cowtobox.put(x, cows[x][1]);
+                        cowtobox.remove(y);
+                        x = y;
+                    }else{
+                        boxtocow.put(cows[x][1], x);
+                        cowtobox.put(x, cows[x][1]);
+                    }
+                }
+            }
+            answers.add(cowtobox.keySet().size());
+        }
+        for(int i=answers.size()-1; i>-1; i--){
+            out.println(answers.get(i));
+        }
+        out.close();
+
+    }
+}

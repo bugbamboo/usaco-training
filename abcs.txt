@@ -1,0 +1,65 @@
+import java.io.*;
+import java.util.*;
+
+public class abcs {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+
+        int casenum = Integer.parseInt(f.readLine());
+        for(int i=0; i<casenum; i++){
+            int num = Integer.parseInt(f.readLine());
+            int[] query = new int[num];
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            for(int j=0; j<num; j++){
+                query[j]=Integer.parseInt(st.nextToken());
+            }
+            System.out.println(solve(query));
+        }
+    }
+    public static int solve(int[] list){
+        int[] copy = new int[list.length];
+
+
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = list[i];
+        }
+        Arrays.sort(copy);
+        ArrayList<Integer> possible = new ArrayList<>();
+        for(int i:copy){
+            possible.add(i);
+        }
+        for(int i=0; i<copy.length; i++){
+            for(int j=0; j<i;j++){
+                possible.add(copy[i]-copy[j]);
+            }
+        }
+        Collections.sort(possible);
+        HashSet<String> set = new HashSet<>();
+        for(int a = 0; a<possible.size();a++){
+            for(int b=a; b<possible.size();b++){
+                for (int c = b; c<possible.size(); c++){
+                    if(check(possible.get(a),possible.get(b),possible.get(c),copy)){
+                        set.add(Arrays.toString(new int[]{possible.get(a),possible.get(b),possible.get(c)}));
+                    }
+                }
+            }
+        }
+        return set.size();
+    }
+    public static boolean check(int a, int b, int c, int[] verify){
+        HashSet<Integer> set = new HashSet<>();
+        set.add(a);
+        set.add(b);
+        set.add(c);
+        set.add(a+b);
+        set.add(b+c);
+        set.add(c+a);
+        set.add(a+b+c);
+        for(int i:verify){
+            if(!set.contains(i)){
+                return false;
+            }
+        }
+        return true;
+    }
+}

@@ -1,0 +1,110 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: contact
+*/
+import java.io.*;
+import java.util.*;
+
+public class contact {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("contact.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("contact.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int a = Integer.parseInt(st.nextToken());
+        int b = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(st.nextToken());
+        ArrayList<Integer> list = new ArrayList<>();
+        String s = f.readLine();
+        while(s!=null){
+            String[] meow = s.split("");
+            for(String m: meow){
+                list.add(Integer.parseInt(m));
+            }
+            s=f.readLine();
+        }
+        ArrayList<HashMap<Integer, Integer>> map = new  ArrayList<>();
+        for(int i=0; i<=b; i++){
+            map.add(new HashMap<>());
+        }
+        for(int i=a; i<=b; i++){
+            if(list.size()>=i) {
+                HashMap<Integer, Integer> currmap = map.get(i);
+                int max = 1 << (i - 1);
+                int curr = 0;
+                for (int j = 0; j < i; j++) {
+                    curr += (list.get(j) << (i - (j + 1)));
+                }
+                currmap.put(curr, 1);
+                for (int k = i; k < list.size(); k++) {
+                    if (curr >= max) {
+                        curr -= max;
+                    }
+                    curr = curr << 1;
+                    curr += list.get(k);
+                    if (currmap.containsKey(curr)) {
+                        currmap.put(curr, currmap.get(curr) + 1);
+                    } else {
+                        currmap.put(curr, 1);
+                    }
+                }
+            }
+
+        }
+        HashMap<Integer, ArrayList<String>> mappp = new HashMap<>();
+        for(int i=a; i<=b; i++){
+
+            HashMap<Integer,Integer> currmap = map.get(i);
+            for(int x: currmap.keySet()){
+                if(mappp.containsKey(currmap.get(x))){
+                    mappp.get(currmap.get(x)).add(intToBinary(x,i));
+                }else{
+                    mappp.put(currmap.get(x), new ArrayList<String>());
+                    mappp.get(currmap.get(x)).add(intToBinary(x,i));
+                }
+            }
+        }
+        List<Integer> aList = new ArrayList<>(mappp.keySet());
+        Collections.sort(aList, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer integer, Integer t1) {
+                return Integer.compare(t1,integer);
+            }
+        });
+        StringBuilder ans = new StringBuilder();
+        for(int i=0; i<Math.min(aList.size(),n); i++){
+            ans.append(aList.get(i)).append("\n");
+            List<String> meow = mappp.get(aList.get(i));
+
+            for(int m=0; m<meow.size()-1; m++){
+                ans.append(meow.get(m));
+                if(m%6==5){
+                    ans.append("\n");
+                }else{
+                    ans.append(" ");
+                }
+            }
+            ans.append(meow.get(meow.size()-1));
+            ans.append("\n");
+        }
+        out.print(ans);
+        out.close();
+
+    }
+    public static String intToBinary(int n, int reqlen)
+    {
+        StringBuilder s = new StringBuilder();
+        while (n > 0)
+        {
+            s.insert(0, (n % 2 ) == 0 ? "0" : "1");
+            n = n / 2;
+        }
+        while (s.length()<reqlen){
+            s.insert(0,"0");
+        }
+        return s.toString();
+    }
+}
+
+
+

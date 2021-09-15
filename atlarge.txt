@@ -1,0 +1,76 @@
+import java.io.*;
+import java.util.*;
+
+public class atlarge {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("atlarge.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("atlarge.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int numbarns = Integer.parseInt(st.nextToken());
+        int startpoint = Integer.parseInt(st.nextToken())-1;
+        int[][] edges = new int[numbarns-1][2];
+        for(int i=0; i<edges.length; i++){
+            st = new StringTokenizer(f.readLine());
+            edges[i][0]=Integer.parseInt(st.nextToken())-1;
+            edges[i][1]=Integer.parseInt(st.nextToken())-1;
+        }
+        ArrayList<ArrayList<Integer>> tree = new ArrayList<>();
+        for(int i=0; i<numbarns; i++){
+            tree.add(new ArrayList<Integer>());
+        }
+        for(int[] i:edges){
+            tree.get(i[0]).add(i[1]);
+            tree.get(i[1]).add(i[0]);
+        }
+        HashMap<Integer,Integer> distances = new HashMap<>();
+        computedistances(distances,tree,startpoint,0);
+        ArrayList<Integer> exits = new ArrayList<>();
+        
+        
+        for(int i=0; i<tree.size(); i++){
+            if(tree.get(i).size()==1){
+                exits.add(i);
+            }
+        }
+        Collections.sort(exits, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer integer, Integer t1) {
+                return Integer.compare(distances.get(integer),distances.get(t1))*-1;
+            }
+        });
+        int x = exits.size();
+        HashSet<Integer> processed = new HashSet<Integer>();
+        for(int i: exits){
+
+            int current =i;
+            processed.add(i);
+            for(int j=0; j<distances.get(i)/2;j++){
+
+                for(int k: tree.get(current)){
+                    if(distances.get(k)<distances.get(current)){
+                        current=k;
+                        break;
+                    }
+                }
+
+                if(processed.contains(current)){
+                    x--;
+                    break;
+                }else{
+                    processed.add(current);
+                }
+            }
+        }
+       out.println(x);
+        out.close();
+
+    }
+    public static void computedistances(HashMap<Integer,Integer> map, ArrayList<ArrayList<Integer>> edges, int startpoint, int dist){
+        map.put(startpoint,dist);
+        for(int x : edges.get(startpoint)){
+            if(!map.containsKey(x)){
+                computedistances(map,edges,x,dist+1);
+            }
+        }
+    }
+}

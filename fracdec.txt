@@ -1,0 +1,65 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: fracdec
+*/
+import java.io.*;
+import java.util.*;
+
+public class fracdec {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("fracdec.in"));
+        PrintWriter out = new PrintWriter(new FileWriter("fracdec.out"));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int numerator = Integer.parseInt(st.nextToken());
+        int denominator = Integer.parseInt(st.nextToken());
+        ArrayList<Integer> digits = new ArrayList<>();
+        HashMap<Integer,Integer> seenreminders = new HashMap<>();
+        int last = 0;
+        int count =0;
+        while (true){
+            int x = numerator/denominator;
+            digits.add(x);
+            numerator=numerator%denominator;
+            if(numerator==0 ||seenreminders.containsKey(numerator)){
+                break;
+            }
+            seenreminders.put(numerator,count);
+            count++;
+            if(numerator<denominator){
+                numerator*=10;
+            }
+        }
+        if(digits.size()==1){
+            digits.add(0);
+        }
+        System.out.println(digits);
+        StringBuilder sb = new StringBuilder();
+        sb.append(digits.get(0));
+        sb.append(".");
+        if(numerator==0){
+            for(int i=1; i<digits.size(); i++){
+                sb.append(digits.get(i));
+            }
+        }else{
+            for(int i=1; i<seenreminders.get(numerator)+1;i++){
+                sb.append(digits.get(i));
+            }
+            sb.append("(");
+            for(int i=seenreminders.get(numerator)+1; i<digits.size(); i++){
+                sb.append(digits.get(i));
+            }
+            sb.append(")");
+        }
+        String str = sb.toString();
+        List<String> tokens = new ArrayList<>();
+        int size=76;
+        for (int start = 0; start < str.length(); start += size) {
+            tokens.add(str.substring(start, Math.min(str.length(), start + size)));
+        }
+        for(String s: tokens){
+            out.println(s);
+        }
+        out.close();
+    }
+}

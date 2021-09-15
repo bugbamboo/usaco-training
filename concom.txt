@@ -1,0 +1,83 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: concom
+*/
+import java.io.*;
+import java.util.*;
+
+public class concom {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("concom.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("concom.out")),true);
+        int numthings = Integer.parseInt(f.readLine());
+        int[][] updates = new int[numthings][3];
+        for(int i=0; i<numthings; i++){
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            updates[i][0]=Integer.parseInt(st.nextToken())-1;
+            updates[i][1]=Integer.parseInt(st.nextToken())-1;
+            updates[i][2]=Integer.parseInt(st.nextToken());
+        }
+        int[][] owns = new int[100][100];
+        int[] owner = new int[100];
+        for(int i=0; i<100; i++){
+            owner[i]=i;
+            owns[i][i]=100;
+        }
+        for(int i=0; i<updates.length; i++){
+
+            update(owns,updates[i][0],updates[i][1],updates[i][2],owner,true);
+        }
+        ArrayList<int[]> ans = new ArrayList<>();
+        for(int i=0; i<100; i++){
+            for(int j=0; j<100; j++){
+                if(i!=j&&owns[i][j]>=50){
+                    ans.add(new int[]{i+1,j+1});
+                }
+            }
+        }
+        Collections.sort(ans, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] ints, int[] t1) {
+                int x = Integer.compare(ints[0],t1[0]);
+                if(x==0){
+                    return Integer.compare(ints[1],t1[1]);
+                }
+                return x;
+            }
+        });
+        StringBuilder answer = new StringBuilder();
+        for(int[] m : ans){
+            answer.append(m[0]+" "+m[1]+"\n");
+        }
+        answer.deleteCharAt(answer.length()-1);
+        out.println(answer);
+        out.close();
+
+
+    }
+    public static void update(int[][] owns, int a, int b, int percent,int[] owner, boolean flag){
+if(percent!=0&&a!=b){
+        int x = owns[a][b];
+        owns[a][b]+=percent;
+        if(x<50 &&owns[a][b]>=50){
+            owner[b]=a;
+            for(int i=0; i<100; i++){
+                if(i!=a&&i!=b&&owns[a][i]<50) {
+                    update(owns, a, i, owns[b][i], owner,false);
+                }
+            }
+        }
+        for(int i=0; i<100; i++){
+            if(i!=a && owns[i][a]>=50 && flag&&owns[i][b]<50) {
+                update(owns, i, b, percent, owner,true);
+            }
+        }
+}
+
+    }
+}
+
+
+
+

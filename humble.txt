@@ -1,0 +1,42 @@
+/*
+ID: achyuta2
+LANG: JAVA
+TASK: humble
+*/
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class humble {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f=new BufferedReader(new FileReader("humble.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("humble.out")));
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        int numprime = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(st.nextToken());
+        int[] primes = new int[numprime];
+        st = new StringTokenizer(f.readLine());
+        for(int i=0; i<numprime; i++){
+            primes[i]= Integer.parseInt(st.nextToken());
+        }
+        int[] humbles = new int[n+1];
+        int[] next = new int[numprime];
+        humbles[0]=1;
+        for (int i = 1; i <= n; i++) {
+            int best = Integer.MAX_VALUE;
+            for (int j = 0; j < numprime; j++) {
+                while (next[j] < i && primes[j]*humbles[next[j]] <= humbles[i-1] ) {
+                    next[j]++;
+                }
+                best=Math.min(best, primes[j]*humbles[next[j]]);
+            }
+            humbles[i]=best;
+        }
+        out.println(humbles[n]);
+        out.close();
+
+    }
+}
+
+
+

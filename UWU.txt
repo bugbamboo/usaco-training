@@ -1,0 +1,43 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class UWU {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+            StringTokenizer st = new StringTokenizer(f.readLine());
+            int n= Integer.parseInt(st.nextToken());
+            int k= Integer.parseInt(st.nextToken());
+            HashSet<Integer> meow = new HashSet<Integer>();
+            for(int i=0; i<n; i++){
+
+                meow.add((Integer.parseInt(f.readLine())/12)+1);
+            }
+            int[] mew = new int[meow.size()];
+            Iterator<Integer> owo = meow.iterator();
+            for(int i=0; i<mew.length; i++){
+                mew[i]=owo.next();
+            }
+            Arrays.sort(mew);
+            int ans=mew.length;
+            int toremove= mew.length+1-k;
+            toremove=Math.max(0,toremove);
+
+            int[]diff = new int[mew.length];
+            diff[0]=mew[0];
+            for(int i=1; i<mew.length; i++){
+                diff[i]=mew[i]-mew[i-1];
+            }
+            //System.out.println(Arrays.toString(diff));
+            Arrays.sort(diff);
+            //System.out.println(Arrays.toString(mew));
+            //System.out.println(Arrays.toString(diff));
+
+            for(int i=0; i<toremove; i++){
+                ans=ans +(diff[i]-1);
+            }
+            System.out.println(ans*12);
+
+    }
+}

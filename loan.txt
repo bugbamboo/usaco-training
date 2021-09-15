@@ -1,0 +1,58 @@
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class loan {
+    public static void main(String[] args) throws IOException {
+        BufferedReader f = new BufferedReader(new FileReader("loan.in"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("loan.out")),true);
+        StringTokenizer st = new StringTokenizer(f.readLine());
+        long n = Long.parseLong(st.nextToken());
+        long k = Long.parseLong(st.nextToken());
+        long m = Long.parseLong(st.nextToken());
+        long pos = 0;
+        for(Long a =n; a>0; a/=2){
+            while ((pos+a)<n && verify(n,k,m,pos+a)){
+                pos+=a;
+
+            }
+        }
+        out.println(pos);
+        out.close();
+
+
+    }
+    public static boolean verify(long N, long K, long M, long X){
+
+
+
+        long current =0;
+        long counter = 0;
+        while(counter<=K&&current<=N){
+
+            long y = Math.max((N-current)/X,M);
+            if(y==M){
+                counter+=(N-current)/y;
+                current+= ((N-current)/y)*y;
+                if(current<N){
+                    current+=y;
+                    counter++;
+                }
+                break;
+            }else{
+                long target =N-X*(y)+1;
+                counter+=(target-current)/y;
+                current+= ((target-current)/y)*y;
+                if(current<target){
+                    current+=y;
+                    counter++;
+                }
+            }
+
+
+        }
+        
+
+
+        return current>=N&&K>=counter;
+    }
+}
